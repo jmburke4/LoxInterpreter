@@ -2,6 +2,8 @@
 
 class Program
 {
+    public static ErrorHandler ErrorHandler { get; } = new ErrorHandler();
+
     public static void Main(string[] args)
     {
         if (args.Length > 1)
@@ -17,11 +19,19 @@ class Program
         {
             RunPrompt();
         }
+        Console.ReadKey();
     }
 
     private static void Run(string line)
     {
-        Console.WriteLine(line);
+        try
+        {
+            Console.WriteLine(line);
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.Exception(ex);
+        }
     }
 
     private static void RunFile(string path)
@@ -37,7 +47,7 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error in runFile: {ex.Message}");
+            ErrorHandler.Exception(ex);
         }
     }
 
@@ -51,6 +61,7 @@ class Program
             line = Console.ReadLine();
             if (line == null || line == "exit") break;
             Run(line);
+            ErrorHandler.ResetErrorFlag();
         }
     }
 }
