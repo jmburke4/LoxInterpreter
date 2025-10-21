@@ -34,7 +34,7 @@ public class ErrorHandler
     /// <remarks>Trips the <see cref="HadError" /> flag.</remarks>
     public void Exception(Exception ex, [CallerMemberName] string callerName = "", [CallerLineNumber] int callerLine = 0)
     {
-        Console.Error.WriteLine($"[{callerName}() Line {callerLine}] Exception: {ex.Message}");
+        Console.Error.WriteLine($"[{callerName}() Line {callerLine}] Exception: {ex.Message}\n{ex.StackTrace}");
         _hadError = true;
     }
 

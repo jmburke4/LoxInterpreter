@@ -19,14 +19,16 @@ class Program
         {
             RunPrompt();
         }
-        Console.ReadKey();
+        //Console.ReadKey();
     }
 
     private static void Run(string line)
     {
         try
         {
-            Console.WriteLine(line);
+            Scanner scanner = new(ErrorHandler, line);
+            scanner.ScanTokens();
+            scanner.PrintTokens();
         }
         catch (Exception ex)
         {

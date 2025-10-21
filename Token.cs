@@ -10,7 +10,7 @@ namespace LoxInterpreter;
 /// <param name="lexeme"></param>
 /// <param name="literal"></param>
 /// <param name="line"></param>
-public class Token(TokenType type, string lexeme, object literal, int line)
+public class Token(TokenType type, string lexeme, object? literal, int line)
 {
     /// <summary>
     /// The <see cref="TokenType"/> of the token. 
@@ -25,7 +25,7 @@ public class Token(TokenType type, string lexeme, object literal, int line)
     /// <summary>
     /// The literal object value of the token.
     /// </summary>
-    private readonly object _literal = literal;
+    private readonly object? _literal = literal;
 
     /// <summary>
     /// The line of input the token was found on.
@@ -39,7 +39,7 @@ public class Token(TokenType type, string lexeme, object literal, int line)
     public string Lexeme => _lexeme;
 
     /// <inheritdoc cref="_literal"/>
-    public object Literal => _literal;
+    public object? Literal => _literal;
 
     /// <inheritdoc cref="_line"/>
     public int Line => _line;
@@ -52,7 +52,7 @@ public class Token(TokenType type, string lexeme, object literal, int line)
     /// </returns>
     public override string ToString()
     {
-        return $"{Type} {Lexeme} {Literal}";
+        return $"{Type} {Lexeme}";
     }
 }
 
