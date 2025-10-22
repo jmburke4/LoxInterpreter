@@ -4,23 +4,6 @@ class Program
 {
     public static ErrorHandler ErrorHandler { get; } = new ErrorHandler();
 
-    public static void Main(string[] args)
-    {
-        if (args.Length > 1)
-        {
-            Console.WriteLine("Usage: loxinterpreter <script> | lox <script>");
-            return;
-        }
-        else if (args.Length == 1)
-        {
-            RunFile(args[0]);
-        }
-        else
-        {
-            RunPrompt();
-        }
-    }
-
     private static void Run(string line)
     {
         try
@@ -63,6 +46,23 @@ class Program
             if (line == null || line == "exit") break;
             Run(line);
             ErrorHandler.ResetErrorFlag();
+        }
+    }
+
+    public static void Main(string[] args)
+    {
+        if (args.Length > 1)
+        {
+            Console.WriteLine("Usage: loxinterpreter <script> | lox <script>");
+            return;
+        }
+        else if (args.Length == 1)
+        {
+            RunFile(args[0]);
+        }
+        else
+        {
+            RunPrompt();
         }
     }
 }

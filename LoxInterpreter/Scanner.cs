@@ -7,31 +7,6 @@ namespace LoxInterpreter;
 public class Scanner(ErrorHandler errorHandler, string source)
 {
     /// <summary>
-    /// The ErrorHandler object to display errors and exceptions to the user.
-    /// </summary>
-    public readonly ErrorHandler ErrorHandler = errorHandler;
-
-    /// <summary>
-    /// The source string of Lox to scan tokens from.
-    /// </summary>
-    private readonly string _source = source;
-
-    /// <summary>
-    /// A list of the tokens scanned from the source string.
-    /// </summary>
-    private readonly List<Token> _tokens = [];
-
-    /// <summary>
-    /// Index of the first character in the lexeme being scanned.
-    /// </summary>
-    private int start = 0;
-
-    /// <summary>
-    /// Index of the current character in the lexeme being scanned.
-    /// </summary>
-    private int current = 0;
-
-    /// <summary>
     /// Maps reserved words to a <see cref="TokenType"/>. 
     /// </summary>
     private static readonly Dictionary<string, TokenType> _keywords = new()
@@ -55,14 +30,39 @@ public class Scanner(ErrorHandler errorHandler, string source)
     };
 
     /// <summary>
-    /// The line number of the current lexeme being scanned.
+    /// The source string of Lox to scan tokens from.
     /// </summary>
-    private int line = 1;
+    private readonly string _source = source;
+
+    /// <summary>
+    /// A list of the tokens scanned from the source string.
+    /// </summary>
+    private readonly List<Token> _tokens = [];
 
     /// <summary>
     /// Checks if the current index is greater than the length of the source string.
     /// </summary>
     private bool AtEnd => current >= _source.Length;
+
+    /// <summary>
+    /// Index of the current character in the lexeme being scanned.
+    /// </summary>
+    private int current = 0;
+
+    /// <summary>
+    /// The line number of the current lexeme being scanned.
+    /// </summary>
+    private int line = 1;
+
+    /// <summary>
+    /// Index of the first character in the lexeme being scanned.
+    /// </summary>
+    private int start = 0;
+
+    /// <summary>
+    /// The ErrorHandler object to display errors and exceptions to the user.
+    /// </summary>
+    public readonly ErrorHandler ErrorHandler = errorHandler;
 
     /// <summary>
     /// Returns the list of scanned tokens.
@@ -105,27 +105,6 @@ public class Scanner(ErrorHandler errorHandler, string source)
 
         AddToken(type, _source[start..current]);
     }
-
-    /// <summary>
-    /// Checks if a char is an alphabetical character or an underscore.
-    /// </summary>
-    /// <param name="c">The char to check.</param>
-    /// <returns>True or False</returns>
-    static public bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
-
-    /// <summary>
-    /// Checks if a char is an alphanumeric character.
-    /// </summary>
-    /// <param name="c">The char to check.</param>
-    /// <returns>True or False</returns>
-    static public bool IsAlphaNumeric(char c) => IsAlpha(c) || IsDigit(c);
-
-    /// <summary>
-    /// Checks if a char is a digit.
-    /// </summary>
-    /// <param name="c">The char to check.</param>
-    /// <returns>True or False</returns>
-    static public bool IsDigit(char c) => c >= '0' && c <= '9';
 
     /// <summary>
     /// Compares the parameter to the next character in the source string.
@@ -173,14 +152,6 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// <returns>The char value of the second-next character.</returns>
     /// <remarks>Does not increment the current index.</remarks>
     private char PeekNext() => current + 1 >= _source.Length ? '\0' : _source[current + 1];
-
-    /// <summary>
-    /// Prints the tokens in the token list to the console.
-    /// </summary>
-    public void PrintTokens()
-    {
-        foreach (var token in _tokens) Console.WriteLine(token);
-    }
 
     /// <summary>
     /// Scans one token from the input string.
@@ -240,20 +211,6 @@ public class Scanner(ErrorHandler errorHandler, string source)
     }
 
     /// <summary>
-    /// Iterates through the input string and scans tokens.
-    /// </summary>
-    public void ScanTokens()
-    {
-        while (!AtEnd)
-        {
-            start = current;
-            ScanToken();
-        }
-
-        AddToken(TokenType.EOF);
-    }
-
-    /// <summary>
     /// Scans a string starting and ending with a double quote.
     /// </summary>
     private void String()
@@ -273,5 +230,49 @@ public class Scanner(ErrorHandler errorHandler, string source)
         Advance();
         var val = _source.Substring(start + 1, current - start - 2);
         AddToken(TokenType.STRING, val);
+    }
+
+    /// <summary>
+    /// Checks if a char is an alphabetical character or an underscore.
+    /// </summary>
+    /// <param name="c">The char to check.</param>
+    /// <returns>True or False</returns>
+    static public bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+
+    /// <summary>
+    /// Checks if a char is an alphanumeric character.
+    /// </summary>
+    /// <param name="c">The char to check.</param>
+    /// <returns>True or False</returns>
+    static public bool IsAlphaNumeric(char c) => IsAlpha(c) || IsDigit(c);
+
+    /// <summary>
+    /// Checks if a char is a digit.
+    /// </summary>
+    /// <param name="c">The char to check.</param>
+    /// <returns>True or False</returns>
+    static public bool IsDigit(char c) => c >= '0' && c <= '9';
+
+    /// <summary>
+    /// Prints the tokens in the token list to the console.
+    /// </summary>
+    public void PrintTokens()
+    {
+        foreach (var token in _tokens) Console.WriteLine(token);
+    }
+
+    /// <summary>
+    /// Iterates through the input string and scans tokens.
+    /// </summary>
+    /// <remarks>Always appends a <see cref="TokenType.EOF"/> token.</remarks>
+    public void ScanTokens()
+    {
+        while (!AtEnd)
+        {
+            start = current;
+            ScanToken();
+        }
+
+        AddToken(TokenType.EOF);
     }
 }

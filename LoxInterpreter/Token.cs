@@ -13,14 +13,14 @@ namespace LoxInterpreter;
 public class Token(TokenType type, string lexeme, object? literal, int line) : IEquatable<Token>
 {
     /// <summary>
-    /// The <see cref="TokenType"/> of the token. 
-    /// </summary>
-    private readonly TokenType _type = type;
-
-    /// <summary>
     /// The string value lexed from input.
     /// </summary>
     private readonly string _lexeme = lexeme;
+
+    /// <summary>
+    /// The line of input the token was found on.
+    /// </summary>
+    private readonly int _line = line;
 
     /// <summary>
     /// The literal object value of the token.
@@ -28,21 +28,21 @@ public class Token(TokenType type, string lexeme, object? literal, int line) : I
     private readonly object? _literal = literal;
 
     /// <summary>
-    /// The line of input the token was found on.
+    /// The <see cref="TokenType"/> of the token. 
     /// </summary>
-    private readonly int _line = line;
-
-    /// <inheritdoc cref="_type"/>
-    public TokenType Type => _type;
+    private readonly TokenType _type = type;
 
     /// <inheritdoc cref="_lexeme"/>
     public string Lexeme => _lexeme;
 
+    /// <inheritdoc cref="_line"/>
+    public int Line => _line;
+
     /// <inheritdoc cref="_literal"/>
     public object? Literal => _literal;
 
-    /// <inheritdoc cref="_line"/>
-    public int Line => _line;
+    /// <inheritdoc cref="_type"/>
+    public TokenType Type => _type;
 
     /// <summary>
     /// Checks if a Token is equal to this Token.
@@ -61,12 +61,9 @@ public class Token(TokenType type, string lexeme, object? literal, int line) : I
     /// Overrides the ToString() method.
     /// </summary>
     /// <returns>
-    /// <see cref="Type"/> <see cref="Lexeme"/> <see cref="Literal"/>
+    /// <see cref="Type"/> <see cref="Lexeme"/> <see cref="Literal"/> <see cref="Line"/> 
     /// </returns>
-    public override string ToString()
-    {
-        return $"{Type} {Lexeme} {Literal} {Line}";
-    }
+    public override string ToString() => $"{Type} {Lexeme} {Literal} {Line}";
 }
 
 /// <summary>

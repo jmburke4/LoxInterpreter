@@ -17,14 +17,10 @@ public class ErrorHandler
     /// </summary>
     private bool _hadError = false;
 
-    /// <summary>
-    /// Gets the stored error messages.
-    /// </summary>
+    /// <inheritdoc cref="_errorMessage"/>
     public string ErrorMessage => _errorMessage;
 
-    /// <summary>
-    /// Gets the Error flag.
-    /// </summary>
+    /// <inheritdoc cref="_hadError"/>
     public bool HadError => _hadError;
 
     /// <summary>
