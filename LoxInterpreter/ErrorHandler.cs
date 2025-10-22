@@ -8,9 +8,19 @@ namespace LoxInterpreter;
 public class ErrorHandler
 {
     /// <summary>
+    /// Stores the error messages written to the console.
+    /// </summary>
+    private string _errorMessage = "";
+
+    /// <summary>
     /// Flag to record whether an error was thrown.
     /// </summary>
     private bool _hadError = false;
+
+    /// <summary>
+    /// Gets the stored error messages.
+    /// </summary>
+    public string ErrorMessage => _errorMessage;
 
     /// <summary>
     /// Gets the Error flag.
@@ -34,7 +44,9 @@ public class ErrorHandler
     /// <remarks>Trips the <see cref="HadError" /> flag.</remarks>
     public void Exception(Exception ex, [CallerMemberName] string callerName = "", [CallerLineNumber] int callerLine = 0)
     {
-        Console.Error.WriteLine($"[{callerName}() Line {callerLine}] Exception: {ex.Message}\n{ex.StackTrace}");
+        string formattedMessage = $"[{callerName}() Line {callerLine}] Exception: {ex.Message}\n{ex.StackTrace}";
+        Console.Error.WriteLine(formattedMessage);
+        _errorMessage += "\n" + formattedMessage;
         _hadError = true;
     }
 
@@ -42,12 +54,18 @@ public class ErrorHandler
     /// <param name="location">The location in the line where the error occurred.</param>
     public void Report(int line, string location, string message)
     {
-        Console.Error.WriteLine($"[Line {line}] Error {location}: {message}");
+        string formattedMessage = $"[Line {line}] Error {location}: {message}";
+        Console.Error.WriteLine(formattedMessage);
+        _errorMessage += "\n" + formattedMessage;
         _hadError = true;
     }
 
     /// <summary>
-    /// Resets the <see cref="HadError"/> flag to false.
+    /// Resets the <see cref="HadError"/> flag to false, and clears the error messages.
     /// </summary>
-    public void ResetErrorFlag() => _hadError = false;
+    public void ResetErrorFlag()
+    {
+        _hadError = false;
+        _errorMessage = "";
+    }
 }

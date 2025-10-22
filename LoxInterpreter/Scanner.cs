@@ -9,7 +9,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// <summary>
     /// The ErrorHandler object to display errors and exceptions to the user.
     /// </summary>
-    private readonly ErrorHandler _errorHandler = errorHandler;
+    public readonly ErrorHandler ErrorHandler = errorHandler;
 
     /// <summary>
     /// The source string of Lox to scan tokens from.
@@ -57,7 +57,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// <summary>
     /// The line number of the current lexeme being scanned.
     /// </summary>
-    private int line = 0;
+    private int line = 1;
 
     /// <summary>
     /// Checks if the current index is greater than the length of the source string.
@@ -111,7 +111,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// </summary>
     /// <param name="c">The char to check.</param>
     /// <returns>True or False</returns>
-    static private bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    static public bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 
     /// <summary>
     /// Checks if a char is an alphanumeric character.
@@ -234,7 +234,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
             default:
                 if (IsDigit(c)) Number();
                 else if (IsAlpha(c)) Identifier();
-                else _errorHandler.Error(line, $"Unexpected character \"{c}\"");
+                else ErrorHandler.Error(line, $"Unexpected character \"{c}\"");
                 break;
         }
     }
@@ -266,7 +266,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
 
         if (AtEnd)
         {
-            _errorHandler.Error(line, "Unterminated string");
+            ErrorHandler.Error(line, "Unterminated string");
             return;
         }
 

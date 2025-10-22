@@ -19,7 +19,6 @@ class Program
         {
             RunPrompt();
         }
-        //Console.ReadKey();
     }
 
     private static void Run(string line)
