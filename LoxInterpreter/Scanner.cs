@@ -118,14 +118,14 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// </summary>
     /// <param name="c">The char to check.</param>
     /// <returns>True or False</returns>
-    static private bool IsAlphaNumeric(char c) => IsAlpha(c) || IsDigit(c);
+    static public bool IsAlphaNumeric(char c) => IsAlpha(c) || IsDigit(c);
 
     /// <summary>
     /// Checks if a char is a digit.
     /// </summary>
     /// <param name="c">The char to check.</param>
     /// <returns>True or False</returns>
-    static private bool IsDigit(char c) => c >= '0' && c <= '9';
+    static public bool IsDigit(char c) => c >= '0' && c <= '9';
 
     /// <summary>
     /// Compares the parameter to the next character in the source string.
