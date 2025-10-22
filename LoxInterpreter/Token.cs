@@ -10,7 +10,7 @@ namespace LoxInterpreter;
 /// <param name="lexeme"></param>
 /// <param name="literal"></param>
 /// <param name="line"></param>
-public class Token(TokenType type, string lexeme, object? literal, int line)
+public class Token(TokenType type, string lexeme, object? literal, int line) : IEquatable<Token>
 {
     /// <summary>
     /// The <see cref="TokenType"/> of the token. 
@@ -43,6 +43,16 @@ public class Token(TokenType type, string lexeme, object? literal, int line)
 
     /// <inheritdoc cref="_line"/>
     public int Line => _line;
+
+    /// <summary>
+    /// Checks if a Token is equal to this Token.
+    /// </summary>
+    /// <param name="other">The Token to compare against</param>
+    /// <returns>True or False</returns>
+    public bool Equals(Token? other)
+    {
+        return other != null && Type == other.Type && Lexeme == other.Lexeme && Line == other.Line;
+    }
 
     /// <summary>
     /// Overrides the ToString() method.
