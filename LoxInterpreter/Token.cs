@@ -51,7 +51,10 @@ public class Token(TokenType type, string lexeme, object? literal, int line) : I
     /// <returns>True or False</returns>
     public bool Equals(Token? other)
     {
-        return other != null && Type == other.Type && Lexeme == other.Lexeme && Literal == other.Literal && Line == other.Line;
+        return other != null && Type == other.Type && Lexeme == other.Lexeme 
+            // Can I avoid casting the literals to strings for comparison?
+            && Literal?.ToString() == other.Literal?.ToString() 
+            && Line == other.Line;
     }
 
     /// <summary>
