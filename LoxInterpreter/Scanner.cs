@@ -111,7 +111,7 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// </summary>
     /// <param name="c">The char to check.</param>
     /// <returns>True or False</returns>
-    static private bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
+    static public bool IsAlpha(char c) => (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_';
 
     /// <summary>
     /// Checks if a char is an alphanumeric character.
