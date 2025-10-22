@@ -51,7 +51,7 @@ public class Token(TokenType type, string lexeme, object? literal, int line) : I
     /// <returns>True or False</returns>
     public bool Equals(Token? other)
     {
-        return other != null && Type == other.Type && Lexeme == other.Lexeme && Line == other.Line;
+        return other != null && Type == other.Type && Lexeme == other.Lexeme && Literal == other.Literal && Line == other.Line;
     }
 
     /// <summary>
@@ -62,7 +62,7 @@ public class Token(TokenType type, string lexeme, object? literal, int line) : I
     /// </returns>
     public override string ToString()
     {
-        return $"{Type} {Lexeme}";
+        return $"{Type} {Lexeme} {Literal} {Line}";
     }
 }
 
