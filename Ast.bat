@@ -1,3 +1,3 @@
 @echo off
     
-dotnet run --project ./GenerateAst/GenerateAst.csproj "R:\\LoxInterpreter\\LoxInterpreter"
+dotnet run --project ./GenerateAst/GenerateAst.csproj ".\LoxInterpreter"
