@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.5.2.0
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11116.177 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxInterpreter", "LoxInterpreter/LoxInterpreter.csproj", "{4CC8522B-6B32-C0DF-FB4A-F142F30840C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxInterpreter", "LoxInterpreter\LoxInterpreter.csproj", "{4CC8522B-6B32-C0DF-FB4A-F142F30840C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxInterpreter.Tests", "LoxInterpreter.Tests/LoxInterpreter.Tests.csproj", "{572C1D41-734D-470C-8FA2-7B9B1770FE64}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoxInterpreter.Tests", "LoxInterpreter.Tests\LoxInterpreter.Tests.csproj", "{572C1D41-734D-470C-8FA2-7B9B1770FE64}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenerateAst", "GenerateAst\GenerateAst.csproj", "{F9A92CF0-4746-429A-B7A1-329DC3E4E9B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisitorPatternExample", "VisitorPatternExample\VisitorPatternExample.csproj", "{3172050B-DE93-44A3-9946-31512A4BFED6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{F9A92CF0-4746-429A-B7A1-329DC3E4E9B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9A92CF0-4746-429A-B7A1-329DC3E4E9B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9A92CF0-4746-429A-B7A1-329DC3E4E9B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3172050B-DE93-44A3-9946-31512A4BFED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3172050B-DE93-44A3-9946-31512A4BFED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3172050B-DE93-44A3-9946-31512A4BFED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3172050B-DE93-44A3-9946-31512A4BFED6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
