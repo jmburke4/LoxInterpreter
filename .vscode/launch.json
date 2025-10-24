@@ -5,11 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "GenerateAst Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build debug",
-            "program": "${workspaceFolder}/bin/Debug/Net9.0/LoxInterpreter.exe",
+            "preLaunchTask": "build ast debug",
+            "program": "${workspaceFolder}/GenerateAst/bin/Debug/Net9.0/GenerateAst.exe",
+            "args": ["R:\\LoxInterpreter\\LoxInterpreter"],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "externalTerminal"
+        },
+        {
+            "name": "LoxInterpreter Debug",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build lox debug",
+            "program": "${workspaceFolder}/LoxInterpreter/bin/Debug/Net9.0/LoxInterpreter.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,

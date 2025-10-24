@@ -3,11 +3,19 @@
 	"tasks": [
 		{
 			"type": "dotnet",
-			"task": "build R:\\LoxInterpreter\\LoxInterpreter.csproj",
-			"file": "R:\\LoxInterpreter\\LoxInterpreter.csproj",
+			"task": "build R:\\LoxInterpreter\\GenerateAst\\GenerateAst.csproj",
+			"file": "R:\\LoxInterpreter\\GenerateAst\\GenerateAst.csproj",
 			"group": "build",
 			"problemMatcher": [],
-			"label": "build debug"
+			"label": "build ast debug"
+		},
+		{
+			"type": "dotnet",
+			"task": "build R:\\LoxInterpreter\\LoxInterpreter\\LoxInterpreter.csproj",
+			"file": "R:\\LoxInterpreter\\LoxInterpreter\\LoxInterpreter.csproj",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "build lox debug"
 		}
 	]
 }
