@@ -3,6 +3,7 @@ namespace LoxInterpreter;
 /// <summary>
 /// Scans a list of tokens from a source string.
 /// </summary>
+/// <param name="errorHandler">The error handler object to use.</param>
 /// <param name="source">The Lox string to scan tokens from.</param>
 public class Scanner(ErrorHandler errorHandler, string source)
 {
