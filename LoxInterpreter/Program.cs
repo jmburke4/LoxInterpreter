@@ -10,7 +10,13 @@ class Program
         {
             Scanner scanner = new(ErrorHandler, line);
             scanner.ScanTokens();
-            scanner.PrintTokens();
+
+            Parser parser = new(ErrorHandler, scanner.Tokens);
+            Expr? expr = parser.Parse();
+
+            if (ErrorHandler.HadError || expr == null) return;
+
+            Console.WriteLine(new AstPrinter().Print(expr));
         }
         catch (Exception ex)
         {

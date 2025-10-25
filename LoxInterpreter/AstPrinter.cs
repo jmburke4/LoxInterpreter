@@ -10,7 +10,7 @@ public class AstPrinter : IVisitor<string>
 
     public string VisitGroupingExpr(Grouping expr) => Parenthesize("group", [expr.Expression]);
 
-    public string VisitLiteralExpr(Literal expr) => expr.Value.ToString() ?? "nil";
+    public string VisitLiteralExpr(Literal expr) => expr.Value?.ToString() ?? "nil";
 
     public string VisitUnaryExpr(Unary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Right]);
 

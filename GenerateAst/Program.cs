@@ -106,7 +106,7 @@ class Program
         [
             "Binary   : Expr Left, Token Operator, Expr Right",
             "Grouping : Expr Expression",
-            "Literal  : Object Value",
+            "Literal  : object? Value",
             "Unary    : Token Operator, Expr Right"
         ];
 
