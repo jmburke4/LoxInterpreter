@@ -1,6 +1,3 @@
-using System;
-using System.Reflection;
-
 namespace LoxInterpreter;
 
 public class Parser(ErrorHandler errorHandler, List<Token> tokens)
@@ -39,9 +36,17 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return expr;
     }
 
-    private void Consume(List<TokenType> types, string msg)
+    private Token Consume(TokenType type, string msg)
     {
-        throw new NotImplementedException();
+        if (Check(type)) return Advance();
+
+        throw Error(Peek, msg);
+    }
+
+    private ParseError Error(Token token, string msg)
+    {
+        ErrorHandler.Error(token, msg);
+        return new ParseError();
     }
 
     private Expr Equality()
@@ -99,11 +104,36 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         if (Match([TokenType.LEFT_PAREN]))
         {
             Expr expr = Expression();
-            Consume([TokenType.RIGHT_PAREN], "Expect ')' after expression.");
+            Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
             return new Grouping(expr);
         }
 
-        throw new Exception();
+        throw Error(Peek, "Expect expression.");
+    }
+
+    private void Synchronize()
+    {
+        Advance();
+
+        while (!AtEnd)
+        {
+            if (Previous.Type == TokenType.SEMICOLON) return;
+
+            switch (Peek.Type)
+            {
+                case TokenType.CLASS:
+                case TokenType.FUN:
+                case TokenType.VAR:
+                case TokenType.FOR:
+                case TokenType.IF:
+                case TokenType.WHILE:
+                case TokenType.PRINT:
+                case TokenType.RETURN:
+                    return;
+            }
+
+            Advance();
+        }
     }
 
     private Expr Term()
@@ -119,7 +149,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
 
         return expr;
     }
-    
+
     private Expr Unary()
     {
         if (Match([TokenType.BANG, TokenType.MINUS]))
@@ -130,5 +160,28 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         }
 
         return Primary();
+    }
+
+    public Expr? Parse()
+    {
+        try
+        {
+            return Expression();
+        }
+        catch (ParseError ex)
+        {
+            _ = ex;
+            return null;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.Exception(ex);
+            return null;
+        }
+    }
+    
+    private class ParseError : Exception
+    {
+        
     }
 }
