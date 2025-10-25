@@ -75,7 +75,8 @@ public class Scanner(ErrorHandler errorHandler, string source)
     /// <param name="type">The <see cref="TokenType"/> of the new Token</param>
     private void AddToken(TokenType type)
     {
-        _tokens.Add(new Token(type, "", null, line));
+        if (type == TokenType.EOF) _tokens.Add(new Token(type, "", null, line));
+        else _tokens.Add(new Token(type, _source[start..current], null, line));
     }
 
     /// <inheritdoc cref="AddToken"/>

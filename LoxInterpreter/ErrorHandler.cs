@@ -32,6 +32,18 @@ public class ErrorHandler
     public void Error(int line, string message) => Report(line, "", message);
 
     /// <summary>
+    /// Displays an error in the user's input.
+    /// </summary>
+    /// <param name="token">The token the error happened on.</param>
+    /// <param name="message">The error message to display.</param>
+    /// <remarks>Trips the <see cref="HadError" /> flag.</remarks>
+    public void Error(Token token, string message)
+    {
+        if (token.Type == TokenType.EOF) Report(token.Line, " at end", message);
+        else Report(token.Line, $" at '{token.Lexeme}'", message);
+    }
+
+    /// <summary>
     /// Displays the exception message to the user with the caller method's name and line number.
     /// </summary>
     /// <param name="ex">The exception caught.</param>

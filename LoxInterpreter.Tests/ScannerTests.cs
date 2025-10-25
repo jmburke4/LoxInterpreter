@@ -140,10 +140,10 @@ public class ScannerTests
         {
             new(TokenType.NUMBER, "123", 123.0, 1),
             new(TokenType.NUMBER, "123.456", 123.456, 1),
-            new(TokenType.DOT, "", null, 1),
+            new(TokenType.DOT, ".", null, 1),
             new(TokenType.NUMBER, "456", 456.0, 1),
             new(TokenType.NUMBER, "123", 123.0, 1),
-            new(TokenType.DOT, "", null, 1),
+            new(TokenType.DOT, ".", null, 1),
             new(TokenType.EOF, "", null, 1)
         };
         
@@ -161,24 +161,24 @@ public class ScannerTests
 
         var tokens = new List<Token>()
         {
-            new(TokenType.LEFT_PAREN, "", null, 1),
-            new(TokenType.RIGHT_PAREN, "", null, 1),
-            new(TokenType.LEFT_BRACE, "", null, 1),
-            new(TokenType.RIGHT_BRACE, "", null, 1),
-            new(TokenType.SEMICOLON, "", null, 1),
-            new(TokenType.COMMA, "", null, 1),
-            new(TokenType.PLUS, "", null, 1),
-            new(TokenType.MINUS, "", null, 1),
-            new(TokenType.STAR, "", null, 1),
-            new(TokenType.BANG_EQUAL, "", null, 1),
-            new(TokenType.EQUAL_EQUAL, "", null, 1),
-            new(TokenType.LESS_EQUAL, "", null, 1),
-            new(TokenType.GREATER_EQUAL, "", null, 1),
-            new(TokenType.BANG_EQUAL, "", null, 1),
-            new(TokenType.LESS, "", null, 1),
-            new(TokenType.GREATER, "", null, 1),
-            new(TokenType.SLASH, "", null, 1),
-            new(TokenType.DOT, "", null, 1),
+            new(TokenType.LEFT_PAREN, "(", null, 1),
+            new(TokenType.RIGHT_PAREN, ")", null, 1),
+            new(TokenType.LEFT_BRACE, "{", null, 1),
+            new(TokenType.RIGHT_BRACE, "}", null, 1),
+            new(TokenType.SEMICOLON, ";", null, 1),
+            new(TokenType.COMMA, ",", null, 1),
+            new(TokenType.PLUS, "+", null, 1),
+            new(TokenType.MINUS, "-", null, 1),
+            new(TokenType.STAR, "*", null, 1),
+            new(TokenType.BANG_EQUAL, "!=", null, 1),
+            new(TokenType.EQUAL_EQUAL, "==", null, 1),
+            new(TokenType.LESS_EQUAL, "<=", null, 1),
+            new(TokenType.GREATER_EQUAL, ">=", null, 1),
+            new(TokenType.BANG_EQUAL, "!=", null, 1),
+            new(TokenType.LESS, "<", null, 1),
+            new(TokenType.GREATER, ">", null, 1),
+            new(TokenType.SLASH, "/", null, 1),
+            new(TokenType.DOT, ".", null, 1),
             new(TokenType.EOF, "", null, 1)
         };
 
