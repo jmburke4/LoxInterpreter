@@ -17,11 +17,19 @@ public class ErrorHandler
     /// </summary>
     private bool _hadError = false;
 
+    /// <summary>
+    /// Flag to record whether a runtime error occurred.
+    /// </summary>
+    private bool _hadRuntimeError = false;
+
     /// <inheritdoc cref="_errorMessage"/>
     public string ErrorMessage => _errorMessage;
 
     /// <inheritdoc cref="_hadError"/>
     public bool HadError => _hadError;
+
+    /// <inheritdoc cref="_hadRuntimeError"/>
+    public bool HadRuntimeError => _hadRuntimeError;
 
     /// <summary>
     /// Displays an error in the user's input.
@@ -74,6 +82,15 @@ public class ErrorHandler
     public void ResetErrorFlag()
     {
         _hadError = false;
+        _hadRuntimeError = false;
         _errorMessage = "";
+    }
+
+    public void RuntimeError(RuntimeError error)
+    {
+        string formattedMessage = $"[Line {error.Token.Line}] RuntimeError: {error.Message}";
+        Console.Error.WriteLine(formattedMessage);
+        _errorMessage += "\n" + formattedMessage;
+        _hadRuntimeError = true;
     }
 }
