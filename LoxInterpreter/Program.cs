@@ -34,16 +34,13 @@ class Program
     {
         try
         {
-            var lines = File.ReadAllLines(path);
-            foreach (var line in lines)
-            {
-                Run(line);
-            }
+            Run(File.ReadAllText(path));
             RunPrompt();
         }
         catch (Exception ex)
         {
             ErrorHandler.Exception(ex);
+            Console.ReadKey();
         }
     }
 
