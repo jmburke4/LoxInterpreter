@@ -18,9 +18,11 @@ class Program
 
             if (ErrorHandler.HadError || expr == null) return;
 
-            Interpreter.Interpret(expr);
-
+            // We use the same interpreter object for variable and function definition tracking
+            var result = Interpreter.Interpret(expr);
             if (ErrorHandler.HadRuntimeError) return;
+            
+            Console.WriteLine(result);
         }
         catch (Exception ex)
         {

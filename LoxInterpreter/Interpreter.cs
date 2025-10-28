@@ -35,12 +35,12 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
         return expr.Accept(this);
     }
 
-    public void Interpret(Expr expr)
+    public object Interpret(Expr expr)
     {
         try
         {
             object val = Evaluate(expr);
-            Console.WriteLine(val ?? "nil");
+            return val;
         }
         catch (RuntimeError ex)
         {
@@ -50,6 +50,7 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
         {
             ErrorHandler.Exception(ex);
         }
+        return "nil";
     }
 
     public object VisitBinaryExpr(Binary expr)
