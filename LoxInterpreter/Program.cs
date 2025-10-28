@@ -4,6 +4,8 @@ class Program
 {
     public static ErrorHandler ErrorHandler { get; } = new ErrorHandler();
 
+    public static Interpreter Interpreter { get; } = new Interpreter(ErrorHandler);
+
     private static void Run(string line)
     {
         try
@@ -16,7 +18,11 @@ class Program
 
             if (ErrorHandler.HadError || expr == null) return;
 
-            Console.WriteLine(new AstPrinter().Print(expr));
+            // We use the same interpreter object for variable and function definition tracking
+            var result = Interpreter.Interpret(expr);
+            if (ErrorHandler.HadRuntimeError) return;
+            
+            Console.WriteLine(result);
         }
         catch (Exception ex)
         {
