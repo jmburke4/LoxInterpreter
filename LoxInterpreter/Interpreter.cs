@@ -81,7 +81,8 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
             case TokenType.SLASH:
                 // Where are divide by zero errors handled?
                 CheckNumberOperand(expr.Operator, left, right);
-                return (double)left / (double)right;
+                if ((double)right != 0) return (double)left / (double)right;
+                else throw new RuntimeError(expr.Operator, $"Divide by zero error. \"{left}/{right}\"");
             case TokenType.STAR:
                 CheckNumberOperand(expr.Operator, left, right);
                 return (double)left * (double)right;
@@ -89,10 +90,10 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
                 // Do I support ints?
                 if (left is double && right is double) return (double)left + (double)right;
                 if (left is string && right is string) return (string)left + (string)right;
-                throw new RuntimeError(expr.Operator, "Operands must be two numbers or two strings.");
+                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings. \"{left}\"+\"{right}\"");
         }
 
-        throw new RuntimeError(expr.Operator, "Unexpected token in VisitBinaryExpr().");
+        throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
     }
 
     public object VisitGroupingExpr(Grouping expr) => Evaluate(expr.Expression);
@@ -116,12 +117,21 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
                 return -(double)right;
         }
 
-        throw new RuntimeError(expr.Operator, "Unexpected token in VisitUnaryExpr()");
+        throw new RuntimeError(expr.Operator, $"Unexpected token in VisitUnaryExpr(). \"{expr.Operator.Lexeme}\"");
     }
 }
 
-public class RuntimeError(Token token, string message) : Exception
+public class RuntimeError : Exception
 {
-    public readonly Token Token = token;
-    public new readonly string Message = message;
+    public Token Token { get; }
+
+    public RuntimeError(Token token, string message) : base(message)
+    {
+        Token = token;
+    }
+
+    public RuntimeError(Token token, string message, Exception inner) : base(message, inner)
+    {
+        Token = token;
+    }
 }
