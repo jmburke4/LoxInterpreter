@@ -26,14 +26,11 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
     private static bool Truthy(object obj)
     {
         if (obj == null) return false;
-        if (obj is bool) return (bool)obj;
+        if (obj is bool b) return b;
         return true;
     }
 
-    private object Evaluate(Expr expr)
-    {
-        return expr.Accept(this);
-    }
+    private object Evaluate(Expr expr) => expr.Accept(this);
 
     public object Interpret(Expr expr)
     {
@@ -44,11 +41,11 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
         }
         catch (RuntimeError ex)
         {
-            ErrorHandler.Exception(ex);
+            ErrorHandler.RuntimeException(ex);
         }
         catch (Exception ex)
         {
-            ErrorHandler.Exception(ex);
+            ErrorHandler.RuntimeException(ex);
         }
         return "nil";
     }
@@ -122,17 +119,7 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
     }
 }
 
-public class RuntimeError : Exception
+public class RuntimeError(Token token, string message) : Exception(message)
 {
-    public Token Token { get; }
-
-    public RuntimeError(Token token, string message) : base(message)
-    {
-        Token = token;
-    }
-
-    public RuntimeError(Token token, string message, Exception inner) : base(message, inner)
-    {
-        Token = token;
-    }
+    public Token Token { get; } = token;
 }

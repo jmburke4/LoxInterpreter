@@ -86,9 +86,16 @@ public class ErrorHandler
         _errorMessage = "";
     }
 
-    public void RuntimeError(RuntimeError error)
+    /// <summary>
+    /// Displays the exception message to the user with the caller method's name and line number.
+    /// </summary>
+    /// <param name="ex">The exception caught.</param>
+    /// <param name="callerName">The name of the calling method.</param>
+    /// <param name="callerLine">The line number where the exception was caught.</param>
+    /// <remarks>Trips the <see cref="HadRuntimeError" /> flag.</remarks>
+    public void RuntimeException(Exception ex, [CallerMemberName] string callerName = "", [CallerLineNumber] int callerLine = 0)
     {
-        string formattedMessage = $"[Line {error.Token.Line}] RuntimeError: {error.Message}";
+        string formattedMessage = $"[{callerName}() Line {callerLine}] Exception: {ex.Message}\n{ex.StackTrace}";
         Console.Error.WriteLine(formattedMessage);
         _errorMessage += "\n" + formattedMessage;
         _hadRuntimeError = true;
