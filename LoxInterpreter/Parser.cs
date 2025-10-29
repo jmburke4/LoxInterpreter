@@ -66,7 +66,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             Token op = Previous;
             Expr right = Term();
-            expr = new Binary(expr, op, right);
+            expr = new Expr.Binary(expr, op, right);
         }
 
         return expr;
@@ -109,7 +109,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             Token op = Previous;
             Expr right = Comparison();
-            expr = new Binary(expr, op, right);
+            expr = new Expr.Binary(expr, op, right);
         }
 
         return expr;
@@ -120,6 +120,13 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// </summary>
     /// <returns>The parsed expression</returns>
     private Expr Expression() => Equality();
+
+    private Stmt.Expression ExpressionStatement()
+    {
+        Expr expr = Expression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new Stmt.Expression(expr);
+    }
 
     /// <summary>
     /// Parses multiplication and division expressions.
@@ -133,7 +140,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             Token op = Previous;
             Expr right = Unary();
-            expr = new Binary(expr, op, right);
+            expr = new Expr.Binary(expr, op, right);
         }
 
         return expr;
@@ -164,20 +171,27 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns>An expression</returns>
     private Expr Primary()
     {
-        if (Match([TokenType.FALSE])) return new Literal(false);
-        if (Match([TokenType.TRUE])) return new Literal(true);
-        if (Match([TokenType.NIL])) return new Literal(null);
+        if (Match([TokenType.FALSE])) return new Expr.Literal(false);
+        if (Match([TokenType.TRUE])) return new Expr.Literal(true);
+        if (Match([TokenType.NIL])) return new Expr.Literal(null);
 
-        if (Match([TokenType.NUMBER, TokenType.STRING])) return new Literal(Previous.Literal);
+        if (Match([TokenType.NUMBER, TokenType.STRING])) return new Expr.Literal(Previous.Literal);
 
         if (Match([TokenType.LEFT_PAREN]))
         {
             Expr expr = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
-            return new Grouping(expr);
+            return new Expr.Grouping(expr);
         }
 
         throw Error(Peek, "Expect expression.");
+    }
+
+    private Stmt.Print PrintStatement()
+    {
+        Expr val = Expression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new Stmt.Print(val);
     }
 
     /// <summary>
@@ -220,7 +234,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             Token op = Previous;
             Expr right = Factor();
-            expr = new Binary(expr, op, right);
+            expr = new Expr.Binary(expr, op, right);
         }
 
         return expr;
@@ -236,32 +250,40 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             Token op = Previous;
             Expr right = Unary();
-            return new Unary(op, right);
+            return new Expr.Unary(op, right);
         }
 
         return Primary();
     }
 
-    /// <summary>
-    /// The public facing method that starts the recursive parser.
-    /// </summary>
-    /// <returns></returns>
-    public Expr? Parse()
+    public List<Stmt> Parse()
     {
+        var statements = new List<Stmt>();
         try
         {
-            return Expression();
+            while (!AtEnd)
+            {
+                statements.Add(Statement());
+            }
+            
+            return statements;
         }
         catch (ParseError ex)
         {
             _ = ex;
-            return null;
+            return statements;
         }
         catch (Exception ex)
         {
             ErrorHandler.Exception(ex);
-            return null;
+            return statements;
         }
+    }
+
+    public Stmt Statement()
+    {
+        if (Match([TokenType.PRINT])) return PrintStatement();
+        return ExpressionStatement();
     }
 
     /// <summary>

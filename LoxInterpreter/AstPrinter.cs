@@ -2,17 +2,17 @@ using System.Text;
 
 namespace LoxInterpreter;
 
-public class AstPrinter : IVisitor<string>
+public class AstPrinter : Expr.IVisitor<string>
 {
     public string Print(Expr expr) => expr.Accept(this);
 
-    public string VisitBinaryExpr(Binary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Left, expr.Right]);
+    public string VisitBinaryExpr(Expr.Binary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Left, expr.Right]);
 
-    public string VisitGroupingExpr(Grouping expr) => Parenthesize("group", [expr.Expression]);
+    public string VisitGroupingExpr(Expr.Grouping expr) => Parenthesize("group", [expr.Expression]);
 
-    public string VisitLiteralExpr(Literal expr) => expr.Value?.ToString() ?? "nil";
+    public string VisitLiteralExpr(Expr.Literal expr) => expr.Value?.ToString() ?? "nil";
 
-    public string VisitUnaryExpr(Unary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Right]);
+    public string VisitUnaryExpr(Expr.Unary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Right]);
 
     private string Parenthesize(string name, List<Expr> exprs)
     {

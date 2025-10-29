@@ -1,6 +1,6 @@
 namespace LoxInterpreter;
 
-public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
+public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stmt.IVisitor<object?>
 {
     public readonly ErrorHandler ErrorHandler = errorHandler;
 
@@ -32,6 +32,11 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
 
     private object Evaluate(Expr expr) => expr.Accept(this);
 
+    private void Execute(Stmt stmt)
+    {
+        stmt.Accept(this);
+    }
+
     public object Interpret(Expr expr)
     {
         try
@@ -50,7 +55,26 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
         return "nil";
     }
 
-    public object VisitBinaryExpr(Binary expr)
+    public void Interpret(List<Stmt> stmts)
+    {
+        try
+        {
+            foreach (var stmt in stmts)
+            {
+                Execute(stmt);
+            }
+        }
+        catch (RuntimeError ex)
+        {
+            ErrorHandler.RuntimeException(ex);
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.RuntimeException(ex);
+        }
+    }
+
+    public object VisitBinaryExpr(Expr.Binary expr)
     {
         object left = Evaluate(expr.Left);
         object right = Evaluate(expr.Right);
@@ -94,15 +118,27 @@ public class Interpreter(ErrorHandler errorHandler) : IVisitor<object>
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
     }
 
-    public object VisitGroupingExpr(Grouping expr) => Evaluate(expr.Expression);
-
-    public object VisitLiteralExpr(Literal expr)
+    public object? VisitExpressionStmt(Stmt.Expression stmt)
     {
-        // This is stupid
-        return expr.Value ?? new Literal(null);
+        Evaluate(stmt.Expr);
+        return null;
     }
 
-    public object VisitUnaryExpr(Unary expr)
+    public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
+
+    public object VisitLiteralExpr(Expr.Literal expr)
+    {
+        // This is stupid
+        return expr.Value ?? new Expr.Literal(null);
+    }
+
+    public object? VisitPrintStmt(Stmt.Print stmt)
+    {
+        Console.WriteLine(Evaluate(stmt.Expr));
+        return null;
+    }
+
+    public object VisitUnaryExpr(Expr.Unary expr)
     {
         object right = Evaluate(expr.Right);
 

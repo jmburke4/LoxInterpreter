@@ -14,15 +14,15 @@ class Program
             scanner.ScanTokens();
 
             Parser parser = new(ErrorHandler, scanner.Tokens);
-            Expr? expr = parser.Parse();
+            var stmts = parser.Parse();
 
-            if (ErrorHandler.HadError || expr == null) return;
+            if (ErrorHandler.HadError) return;
 
             // We use the same interpreter object for variable and function definition tracking
-            var result = Interpreter.Interpret(expr);
+            Interpreter.Interpret(stmts);
             if (ErrorHandler.HadRuntimeError) return;
             
-            Console.WriteLine(result);
+            //Console.WriteLine(result);
         }
         catch (Exception ex)
         {
