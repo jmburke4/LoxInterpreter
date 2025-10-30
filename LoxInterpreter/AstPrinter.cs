@@ -6,6 +6,9 @@ public class AstPrinter : Expr.IVisitor<string>
 {
     public string Print(Expr expr) => expr.Accept(this);
 
+    // I added this just to get the project to compile, this needs fact checked
+    public string VisitAssignExpr(Expr.Assign expr) => expr.Name.Lexeme;
+
     public string VisitBinaryExpr(Expr.Binary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Left, expr.Right]);
 
     public string VisitGroupingExpr(Expr.Grouping expr) => Parenthesize("group", [expr.Expression]);

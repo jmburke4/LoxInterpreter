@@ -109,6 +109,7 @@ class Program
         string baseName = "Expr";
         List<string> types =
         [
+            "Assign   : Token Name, Expr Value",
             "Binary   : Expr Left, Token Operator, Expr Right",
             "Grouping : Expr Expression",
             "Literal  : object? Value",

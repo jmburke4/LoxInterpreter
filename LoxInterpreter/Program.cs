@@ -53,8 +53,12 @@ class Program
             Console.Write("\n>");
             line = Console.ReadLine();
             if (line == null || line == "exit") break;
-            Run(line);
-            ErrorHandler.ResetErrorFlag();
+            if (line == "cls") Console.Clear();
+            else
+            {
+                Run(line);
+                ErrorHandler.ResetErrorFlag();
+            }
         }
     }
 

@@ -76,6 +76,13 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         }
     }
 
+    public object VisitAssignExpr(Expr.Assign expr)
+    {
+        object val = Evaluate(expr.Value);
+        environment.Assign(expr.Name, val);
+        return val;
+    }
+
     public object VisitBinaryExpr(Expr.Binary expr)
     {
         object left = Evaluate(expr.Left);

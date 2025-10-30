@@ -47,6 +47,27 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Previous;
     }
 
+    private Expr Assignment()
+    {
+        Expr expr = Equality();
+
+        if (Match([TokenType.EQUAL]))
+        {
+            Token equals = Previous;
+            Expr value = Assignment();
+
+            if (expr.GetType() == typeof(Expr.Variable))
+            {
+                Token name = ((Expr.Variable)expr).Name;
+                return new Expr.Assign(name, value);
+            }
+
+            Error(equals, "Invalid assignment target.");
+        }
+
+        return expr;
+    }
+
     /// <summary>
     /// Checks if the current token matches the TokenType parameter.
     /// </summary>
@@ -140,7 +161,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// Starts the recursive descent parser.
     /// </summary>
     /// <returns>The parsed expression</returns>
-    private Expr Expression() => Equality();
+    private Expr Expression() => Assignment();
 
     private Stmt.Expression ExpressionStatement()
     {
