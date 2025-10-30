@@ -2,6 +2,8 @@ namespace LoxInterpreter;
 
 public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stmt.IVisitor<object?>
 {
+    private readonly Environment environment = new();
+
     public readonly ErrorHandler ErrorHandler = errorHandler;
 
     private static void CheckNumberOperand(Token op, object operand)
@@ -149,6 +151,16 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         }
 
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitUnaryExpr(). \"{expr.Operator.Lexeme}\"");
+    }
+
+    public object VisitVariableExpr(Expr.Variable expr) => environment.Get(expr.Name) ?? "nil";
+
+    public object? VisitVarStmt(Stmt.Var stmt)
+    {
+        object? val = null;
+        if (stmt.Initializer != null) val = Evaluate(stmt.Initializer);
+        environment.Define(stmt.Name.Lexeme, val);
+        return null;
     }
 }
 

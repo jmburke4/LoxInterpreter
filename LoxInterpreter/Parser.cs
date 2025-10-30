@@ -97,6 +97,27 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return new ParseError();
     }
 
+    private Stmt? Declaration()
+    {
+        try
+        {
+            if (Match([TokenType.VAR])) return VarDeclaration();
+            return Statement();
+        }
+        catch (ParseError ex)
+        {
+            ErrorHandler.Exception(ex);
+            Synchronize();
+            return null;
+        }
+        catch (Exception ex)
+        {
+            ErrorHandler.Exception(ex);
+            Synchronize();
+            return null;
+        }
+    }
+
     /// <summary>
     /// Parses equality (!=, ==) expressions.
     /// </summary>
@@ -176,6 +197,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         if (Match([TokenType.NIL])) return new Expr.Literal(null);
 
         if (Match([TokenType.NUMBER, TokenType.STRING])) return new Expr.Literal(Previous.Literal);
+        if (Match([TokenType.IDENTIFIER])) return new Expr.Variable(Previous);
 
         if (Match([TokenType.LEFT_PAREN]))
         {
@@ -256,6 +278,18 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Primary();
     }
 
+    private Stmt VarDeclaration()
+    {
+        Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+        Expr init;
+        if (Match([TokenType.EQUAL])) init = Expression();
+        else throw new ParseError();
+
+        Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new Stmt.Var(name, init);
+    }
+
     public List<Stmt> Parse()
     {
         var statements = new List<Stmt>();
@@ -263,7 +297,8 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         {
             while (!AtEnd)
             {
-                statements.Add(Statement());
+                var t = Declaration();
+                if (t != null) statements.Add(t);
             }
             
             return statements;

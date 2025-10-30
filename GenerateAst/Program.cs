@@ -112,7 +112,8 @@ class Program
             "Binary   : Expr Left, Token Operator, Expr Right",
             "Grouping : Expr Expression",
             "Literal  : object? Value",
-            "Unary    : Token Operator, Expr Right"
+            "Unary    : Token Operator, Expr Right",
+            "Variable : Token Name"
         ];
 
         DefineBase(args[0], baseName, types);
@@ -121,7 +122,8 @@ class Program
         types.Clear();
         types.AddRange([
             "Expression : Expr Expr",
-            "Print      : Expr Expr"
+            "Print      : Expr Expr",
+            "Var        : Token Name, Expr Initializer"
         ]);
 
         DefineBase(args[0], baseName, types);

@@ -14,6 +14,9 @@ public class AstPrinter : Expr.IVisitor<string>
 
     public string VisitUnaryExpr(Expr.Unary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Right]);
 
+    // I added this just to get the project to compile, this needs fact checked
+    public string VisitVariableExpr(Expr.Variable expr) => expr.Name.Lexeme;
+
     private string Parenthesize(string name, List<Expr> exprs)
     {
         StringBuilder builder = new();
