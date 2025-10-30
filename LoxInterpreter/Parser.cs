@@ -280,6 +280,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         }
     }
 
+    // This was made public so that it is accessible to the test project
     public Stmt Statement()
     {
         if (Match([TokenType.PRINT])) return PrintStatement();

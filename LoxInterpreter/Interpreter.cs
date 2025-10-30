@@ -46,11 +46,11 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         }
         catch (RuntimeError ex)
         {
-            ErrorHandler.RuntimeException(ex);
+            ErrorHandler.RuntimeError(ex);
         }
         catch (Exception ex)
         {
-            ErrorHandler.RuntimeException(ex);
+            ErrorHandler.Exception(ex);
         }
         return "nil";
     }
@@ -66,11 +66,11 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         }
         catch (RuntimeError ex)
         {
-            ErrorHandler.RuntimeException(ex);
+            ErrorHandler.RuntimeError(ex);
         }
         catch (Exception ex)
         {
-            ErrorHandler.RuntimeException(ex);
+            ErrorHandler.Exception(ex);
         }
     }
 
@@ -126,12 +126,9 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
 
-    public object VisitLiteralExpr(Expr.Literal expr)
-    {
-        // This is stupid
-        return expr.Value ?? new Expr.Literal(null);
-    }
+    public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
 
+    // This is a void function, but C# does not allow void type Ts
     public object? VisitPrintStmt(Stmt.Print stmt)
     {
         Console.WriteLine(Evaluate(stmt.Expr));

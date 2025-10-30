@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Lox.bat = Lox.bat
 		README.md = README.md
 		.vscode\tasks.json = .vscode\tasks.json
+		sample.lox = sample.lox
 	EndProjectSection
 EndProject
 Global
