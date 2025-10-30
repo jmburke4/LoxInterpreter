@@ -2,7 +2,7 @@ namespace LoxInterpreter;
 
 public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stmt.IVisitor<object?>
 {
-    private readonly Environment environment = new();
+    private Environment environment = new();
 
     public readonly ErrorHandler ErrorHandler = errorHandler;
 
@@ -37,6 +37,23 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
     private void Execute(Stmt stmt)
     {
         stmt.Accept(this);
+    }
+
+    private void ExecuteBlock(List<Stmt> statements, Environment env)
+    {
+        Environment previous = environment;
+        try
+        {
+            environment = env;
+            foreach (var stmt in statements)
+            {
+                Execute(stmt);
+            }
+        }
+        finally
+        {
+            environment = previous;
+        }
     }
 
     public object Interpret(Expr expr)
@@ -125,6 +142,12 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         }
 
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
+    }
+
+    public object? VisitBlockStmt(Stmt.Block stmt)
+    {
+        ExecuteBlock(stmt.Statements, new Environment(environment));
+        return null;
     }
 
     public object? VisitExpressionStmt(Stmt.Expression stmt)

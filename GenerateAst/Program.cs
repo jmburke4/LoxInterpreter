@@ -122,6 +122,7 @@ class Program
         baseName = "Stmt";
         types.Clear();
         types.AddRange([
+            "Block      : List<Stmt> Statements",
             "Expression : Expr Expr",
             "Print      : Expr Expr",
             "Var        : Token Name, Expr Initializer"

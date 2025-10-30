@@ -68,6 +68,20 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return expr;
     }
 
+    private List<Stmt> Block()
+    {
+        List<Stmt> statements = [];
+
+        while (!Check(TokenType.RIGHT_BRACE) && !AtEnd)
+        {
+            var t = Declaration();
+            if (t != null) statements.Add(t);
+        }
+
+        Consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+        return statements;
+    }
+
     /// <summary>
     /// Checks if the current token matches the TokenType parameter.
     /// </summary>
@@ -340,6 +354,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     public Stmt Statement()
     {
         if (Match([TokenType.PRINT])) return PrintStatement();
+        if (Match([TokenType.LEFT_BRACE])) return new Stmt.Block(Block());
         return ExpressionStatement();
     }
 
