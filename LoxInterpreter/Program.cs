@@ -8,42 +8,29 @@ class Program
 
     private static void Run(string line)
     {
-        try
-        {
-            Scanner scanner = new(ErrorHandler, line);
-            scanner.ScanTokens();
+        Scanner scanner = new(ErrorHandler, line);
+        scanner.ScanTokens();
 
-            Parser parser = new(ErrorHandler, scanner.Tokens);
-            Expr? expr = parser.Parse();
+        Parser parser = new(ErrorHandler, scanner.Tokens);
+        var stmts = parser.Parse();
 
-            if (ErrorHandler.HadError || expr == null) return;
+        if (ErrorHandler.HadError) return;
 
-            // We use the same interpreter object for variable and function definition tracking
-            var result = Interpreter.Interpret(expr);
-            if (ErrorHandler.HadRuntimeError) return;
-            
-            Console.WriteLine(result);
-        }
-        catch (Exception ex)
-        {
-            ErrorHandler.Exception(ex);
-        }
+        // We use the same interpreter object for variable and function definition tracking
+        Interpreter.Interpret(stmts);
     }
 
     private static void RunFile(string path)
     {
         try
         {
-            var lines = File.ReadAllLines(path);
-            foreach (var line in lines)
-            {
-                Run(line);
-            }
+            Run(File.ReadAllText(path));
             RunPrompt();
         }
         catch (Exception ex)
         {
             ErrorHandler.Exception(ex);
+            Console.ReadKey();
         }
     }
 
@@ -56,8 +43,12 @@ class Program
             Console.Write("\n>");
             line = Console.ReadLine();
             if (line == null || line == "exit") break;
-            Run(line);
-            ErrorHandler.ResetErrorFlag();
+            if (line == "cls") Console.Clear();
+            else
+            {
+                Run(line);
+                ErrorHandler.ResetErrorFlag();
+            }
         }
     }
 
