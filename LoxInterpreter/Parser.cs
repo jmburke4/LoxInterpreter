@@ -47,6 +47,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Previous;
     }
 
+    /// <summary>
+    /// Parses variable assignment expressions.
+    /// </summary>
+    /// <returns></returns>
     private Expr Assignment()
     {
         Expr expr = Equality();
@@ -68,6 +72,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return expr;
     }
 
+    /// <summary>
+    /// Parses a list of statements upon encountering a left brace.
+    /// </summary>
+    /// <returns></returns>
     private List<Stmt> Block()
     {
         List<Stmt> statements = [];
@@ -132,6 +140,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return new ParseError();
     }
 
+    /// <summary>
+    /// Parses a variable declaration.
+    /// </summary>
+    /// <returns></returns>
     private Stmt? Declaration()
     {
         try
@@ -177,6 +189,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns>The parsed expression</returns>
     private Expr Expression() => Assignment();
 
+    /// <summary>
+    /// Parses an expression statement.
+    /// </summary>
+    /// <returns></returns>
     private Stmt.Expression ExpressionStatement()
     {
         Expr expr = Expression();
@@ -244,6 +260,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         throw Error(Peek, "Expect expression.");
     }
 
+    /// <summary>
+    /// Parses a print statement.
+    /// </summary>
+    /// <returns></returns>
     private Stmt.Print PrintStatement()
     {
         Expr val = Expression();
@@ -252,7 +272,18 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
-    /// Recovers the parser after a syntax error
+    /// Parses a statement.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt Statement()
+    {
+        if (Match([TokenType.PRINT])) return PrintStatement();
+        if (Match([TokenType.LEFT_BRACE])) return new Stmt.Block(Block());
+        return ExpressionStatement();
+    }
+
+    /// <summary>
+    /// Recovers the parser after a syntax error.
     /// </summary>
     private void Synchronize()
     {
@@ -313,7 +344,12 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Primary();
     }
 
-    private Stmt VarDeclaration()
+    /// <summary>
+    /// Parses a variable declaration statement.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="ParseError"></exception>
+    private Stmt.Var VarDeclaration()
     {
         Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
@@ -325,6 +361,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return new Stmt.Var(name, init);
     }
 
+    /// <summary>
+    /// Turns a sequence of tokens into a list of statements to be interpreted.
+    /// </summary>
+    /// <returns></returns>
     public List<Stmt> Parse()
     {
         var statements = new List<Stmt>();
@@ -335,12 +375,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
                 var t = Declaration();
                 if (t != null) statements.Add(t);
             }
-            
-            return statements;
-        }
-        catch (ParseError ex)
-        {
-            _ = ex;
+
             return statements;
         }
         catch (Exception ex)
@@ -349,20 +384,13 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
             return statements;
         }
     }
-
-    // This was made public so that it is accessible to the test project
-    public Stmt Statement()
-    {
-        if (Match([TokenType.PRINT])) return PrintStatement();
-        if (Match([TokenType.LEFT_BRACE])) return new Stmt.Block(Block());
-        return ExpressionStatement();
-    }
-
-    /// <summary>
-    /// Simple exception extension for reporting syntax errors.
-    /// </summary>
-    private class ParseError : Exception
-    {
-
-    }
 }
+
+/// <summary>
+/// Simple exception extension for reporting syntax errors.
+/// </summary>
+public class ParseError : Exception
+{
+
+}
+    

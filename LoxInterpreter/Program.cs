@@ -8,26 +8,16 @@ class Program
 
     private static void Run(string line)
     {
-        try
-        {
-            Scanner scanner = new(ErrorHandler, line);
-            scanner.ScanTokens();
+        Scanner scanner = new(ErrorHandler, line);
+        scanner.ScanTokens();
 
-            Parser parser = new(ErrorHandler, scanner.Tokens);
-            var stmts = parser.Parse();
+        Parser parser = new(ErrorHandler, scanner.Tokens);
+        var stmts = parser.Parse();
 
-            if (ErrorHandler.HadError) return;
+        if (ErrorHandler.HadError) return;
 
-            // We use the same interpreter object for variable and function definition tracking
-            Interpreter.Interpret(stmts);
-            if (ErrorHandler.HadRuntimeError) return;
-            
-            //Console.WriteLine(result);
-        }
-        catch (Exception ex)
-        {
-            ErrorHandler.Exception(ex);
-        }
+        // We use the same interpreter object for variable and function definition tracking
+        Interpreter.Interpret(stmts);
     }
 
     private static void RunFile(string path)

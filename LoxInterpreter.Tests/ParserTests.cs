@@ -13,7 +13,7 @@ public class ParserTests
         scanner.ScanTokens();
 
         Parser parser = new(errorHandler, scanner.Tokens);
-        var stmt = (Stmt.Expression)parser.Statement();
+        var stmt = (Stmt.Expression)parser.Parse().First();
 
         Assert.NotNull(stmt);
         Assert.Equal(expected, new AstPrinter().Print(stmt.Expr));
