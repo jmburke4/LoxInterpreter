@@ -215,6 +215,13 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
 
+    public object? VisitIfStmt(Stmt.If stmt)
+    {
+        if (Truthy(Evaluate(stmt.Condition))) Execute(stmt.ThenBranch);
+        else if (stmt.ElseBranch != null) Execute(stmt.ElseBranch);
+        return null;
+    }
+
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
 
     // This is a void function, but C# does not allow void type Ts

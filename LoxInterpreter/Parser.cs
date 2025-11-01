@@ -219,6 +219,27 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses out an if statement with an option else clause.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt IfStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+        Expr cond = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+
+        Stmt thenBranch = Statement();
+        Stmt? elseBranch = null;
+
+        if (Match(TokenType.ELSE))
+        {
+            elseBranch = Statement();
+        }
+
+        return new Stmt.If(cond, thenBranch, elseBranch);
+    }
+
+    /// <summary>
     /// Checks if the current token is one of the types passed.
     /// </summary>
     /// <param name="types">The types to check the token against.</param>
@@ -278,6 +299,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns></returns>
     private Stmt Statement()
     {
+        if (Match(TokenType.IF)) return IfStatement();
         if (Match(TokenType.PRINT)) return PrintStatement();
         if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
