@@ -112,4 +112,18 @@ public class ControlFlowTests
 
     [Fact]
     public void FalseOrChain() => Test(f, "print false or false or false;");
+
+    /// <summary>
+    /// While
+    /// </summary>
+
+    [Fact]
+    public void WhileIncrementA() =>
+    Test("0\r\n1\r\n2\r\n", "var a = 0; while (a < 3) { print a; a = a + 1; }");
+
+    [Fact]
+    public void WhileFalse() => Test(string.Empty, "while (false) print test;");
+
+    [Fact]
+    public void WhileTrue() => Test(t, "var a = true; while (a) { print a; a = false; }");
 }

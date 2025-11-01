@@ -127,7 +127,8 @@ class Program
             "Expression : Expr Expr",
             "If         : Expr Condition, Stmt ThenBranch, Stmt? ElseBranch",
             "Print      : Expr Expr",
-            "Var        : Token Name, Expr Initializer"
+            "Var        : Token Name, Expr Initializer",
+            "While      : Expr Condition, Stmt Body"
         ]);
 
         DefineBase(args[0], baseName, types);

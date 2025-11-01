@@ -255,7 +255,7 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         {
             case TokenType.BANG:
                 return !Truthy(right);
-                
+
             case TokenType.MINUS:
                 CheckNumberOperand(expr.Operator, right);
                 return -(double)right;
@@ -271,6 +271,15 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         object? val = null;
         if (stmt.Initializer != null) val = Evaluate(stmt.Initializer);
         environment.Define(stmt.Name.Lexeme, val);
+        return null;
+    }
+
+    public object? VisitWhileStmt(Stmt.While stmt)
+    {
+        while (Truthy(Evaluate(stmt.Condition)))
+        {
+            Execute(stmt.Body);
+        }
         return null;
     }
 

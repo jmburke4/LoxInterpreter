@@ -329,6 +329,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         if (Match(TokenType.IF)) return IfStatement();
         if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.WHILE)) return WhileStatement();
         if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
     }
@@ -410,6 +411,19 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
 
         Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
         return new Stmt.Var(name, init);
+    }
+
+    /// <summary>
+    /// Parses the condition and action for a while statement.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt.While WhileStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+        Expr condition = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+        Stmt body = Statement();
+        return new Stmt.While(condition, body);
     }
 
     /// <summary>
