@@ -55,7 +55,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         Expr expr = Equality();
 
-        if (Match([TokenType.EQUAL]))
+        if (Match(TokenType.EQUAL))
         {
             Token equals = Previous;
             Expr value = Assignment();
@@ -148,7 +148,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         try
         {
-            if (Match([TokenType.VAR])) return VarDeclaration();
+            if (Match(TokenType.VAR)) return VarDeclaration();
             return Statement();
         }
         catch (ParseError ex)
@@ -223,6 +223,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// </summary>
     /// <param name="types">The types to check the token against.</param>
     /// <returns>True or False</returns>
+    private bool Match(TokenType type) => Match([type]);
     private bool Match(List<TokenType> types)
     {
         foreach (var type in types)
@@ -243,14 +244,14 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns>An expression</returns>
     private Expr Primary()
     {
-        if (Match([TokenType.FALSE])) return new Expr.Literal(false);
-        if (Match([TokenType.TRUE])) return new Expr.Literal(true);
-        if (Match([TokenType.NIL])) return new Expr.Literal(null);
+        if (Match(TokenType.FALSE)) return new Expr.Literal(false);
+        if (Match(TokenType.TRUE)) return new Expr.Literal(true);
+        if (Match(TokenType.NIL)) return new Expr.Literal(null);
 
         if (Match([TokenType.NUMBER, TokenType.STRING])) return new Expr.Literal(Previous.Literal);
-        if (Match([TokenType.IDENTIFIER])) return new Expr.Variable(Previous);
+        if (Match(TokenType.IDENTIFIER)) return new Expr.Variable(Previous);
 
-        if (Match([TokenType.LEFT_PAREN]))
+        if (Match(TokenType.LEFT_PAREN))
         {
             Expr expr = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
@@ -277,8 +278,8 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns></returns>
     private Stmt Statement()
     {
-        if (Match([TokenType.PRINT])) return PrintStatement();
-        if (Match([TokenType.LEFT_BRACE])) return new Stmt.Block(Block());
+        if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
     }
 
@@ -354,7 +355,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
         Expr init;
-        if (Match([TokenType.EQUAL])) init = Expression();
+        if (Match(TokenType.EQUAL)) init = Expression();
         else throw new ParseError();
 
         Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
