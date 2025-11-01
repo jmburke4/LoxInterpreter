@@ -114,7 +114,7 @@ public class ControlFlowTests
     public void FalseOrChain() => Test(f, "print false or false or false;");
 
     /// <summary>
-    /// While
+    /// While loop
     /// </summary>
 
     [Fact]
@@ -126,4 +126,45 @@ public class ControlFlowTests
 
     [Fact]
     public void WhileTrue() => Test(t, "var a = true; while (a) { print a; a = false; }");
+
+    [Fact]
+    public void WhileNested() => Test(
+        t + t,
+        @"var a = true;
+          while (a)
+          {
+            print (a);
+            var b = true;
+            while (b)
+            {
+              print (b);
+              b = false;
+            }
+            a = false;
+          }"
+    );
+
+    /// <summary>
+    /// For loop
+    /// </summary>
+
+    [Fact]
+    public void ForA() =>
+    Test("0\r\n1\r\n2\r\n", "for (var a = 0; a <= 2; a = a + 1) print a;");
+
+    [Fact]
+    public void ForB() =>
+    Test("0\r\n2\r\n4\r\n", "for (var b = 0; b < 5; b = b + 2) print b;");
+
+    [Fact]
+    public void ForNested() => Test(
+        "0 0\r\n0 1\r\n0 2\r\n1 0\r\n1 1\r\n1 2\r\n",
+        @"for (var i = 0; i < 2; i = i + 1)
+          { 
+            for (var j = 0; j < 3; j = j + 1) 
+            {
+              print i + "" "" + j;
+            }
+          }"
+    );
 }

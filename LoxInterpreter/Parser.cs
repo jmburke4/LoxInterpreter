@@ -47,6 +47,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Previous;
     }
 
+    /// <summary>
+    /// Parses and expressions.
+    /// </summary>
+    /// <returns></returns>
     private Expr And()
     {
         Expr expr = Equality();
@@ -233,6 +237,39 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Builds a for statement tree by appending block statements with an initializer,
+    /// condition, and increment clause.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt ForStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+        Stmt? initializer;
+        if (Match(TokenType.SEMICOLON)) initializer = null;
+        else if (Match(TokenType.VAR)) initializer = VarDeclaration();
+        else initializer = ExpressionStatement();
+
+        Expr? condition = null;
+        if (!Check(TokenType.SEMICOLON)) condition = Expression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+        Expr? increment = null;
+        if (!Check(TokenType.RIGHT_PAREN)) increment = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        Stmt body = Statement();
+
+        if (increment != null) body = new Stmt.Block([body, new Stmt.Expression(increment)]);
+        condition ??= new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+
+        if (initializer != null) body = new Stmt.Block([initializer, body]);
+
+        return body;
+    }
+
+    /// <summary>
     /// Parses out an if statement with an option else clause.
     /// </summary>
     /// <returns></returns>
@@ -273,6 +310,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return false;
     }
 
+    /// <summary>
+    /// Parses or expressions.
+    /// </summary>
+    /// <returns></returns>
     private Expr Or()
     {
         Expr expr = And();
@@ -327,6 +368,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns></returns>
     private Stmt Statement()
     {
+        if (Match(TokenType.FOR)) return ForStatement();
         if (Match(TokenType.IF)) return IfStatement();
         if (Match(TokenType.PRINT)) return PrintStatement();
         if (Match(TokenType.WHILE)) return WhileStatement();

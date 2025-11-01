@@ -194,8 +194,8 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
             case TokenType.PLUS:
                 if (left is double && right is double) return (double)left + (double)right;
-                if (left is string && right is string) return (string)left + (string)right;
-                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings. \"{left}\"+\"{right}\"");
+                if (left is string || right is string) return left.ToString() + right.ToString();
+                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings or a number and a string. \"{left}\"+\"{right}\"");
         }
 
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
