@@ -224,6 +224,22 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
 
+    public object VisitLogicalExpr(Expr.Logical expr)
+    {
+        object left = Evaluate(expr.Left);
+
+        if (expr.Operator.Type == TokenType.OR)
+        {
+            if (Truthy(left)) return left;
+        }
+        else
+        {
+            if (!Truthy(left)) return left;
+        }
+
+        return Evaluate(expr.Right);
+    }
+
     // This is a void function, but C# does not allow void type Ts
     public object? VisitPrintStmt(Stmt.Print stmt)
     {

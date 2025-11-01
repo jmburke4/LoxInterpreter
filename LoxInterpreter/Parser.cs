@@ -47,13 +47,27 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return Previous;
     }
 
+    private Expr And()
+    {
+        Expr expr = Equality();
+
+        while (Match(TokenType.AND))
+        {
+            Token op = Previous;
+            Expr right = Equality();
+            expr = new Expr.Logical(expr, op, right);
+        }
+
+        return expr;
+    }
+
     /// <summary>
     /// Parses variable assignment expressions.
     /// </summary>
     /// <returns></returns>
     private Expr Assignment()
     {
-        Expr expr = Equality();
+        Expr expr = Or();
 
         if (Match(TokenType.EQUAL))
         {
@@ -257,6 +271,20 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         }
 
         return false;
+    }
+
+    private Expr Or()
+    {
+        Expr expr = And();
+
+        while (Match(TokenType.OR))
+        {
+            Token op = Previous;
+            Expr right = And();
+            expr = new Expr.Logical(expr, op, right);
+        }
+
+        return expr;
     }
 
     /// <summary>
