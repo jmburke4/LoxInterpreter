@@ -194,8 +194,8 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
             case TokenType.PLUS:
                 if (left is double && right is double) return (double)left + (double)right;
-                if (left is string && right is string) return (string)left + (string)right;
-                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings. \"{left}\"+\"{right}\"");
+                if (left is string || right is string) return left.ToString() + right.ToString();
+                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings or a number and a string. \"{left}\"+\"{right}\"");
         }
 
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
@@ -215,7 +215,30 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
 
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
 
+    public object? VisitIfStmt(Stmt.If stmt)
+    {
+        if (Truthy(Evaluate(stmt.Condition))) Execute(stmt.ThenBranch);
+        else if (stmt.ElseBranch != null) Execute(stmt.ElseBranch);
+        return null;
+    }
+
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
+
+    public object VisitLogicalExpr(Expr.Logical expr)
+    {
+        object left = Evaluate(expr.Left);
+
+        if (expr.Operator.Type == TokenType.OR)
+        {
+            if (Truthy(left)) return left;
+        }
+        else
+        {
+            if (!Truthy(left)) return left;
+        }
+
+        return Evaluate(expr.Right);
+    }
 
     // This is a void function, but C# does not allow void type Ts
     public object? VisitPrintStmt(Stmt.Print stmt)
@@ -232,7 +255,7 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         {
             case TokenType.BANG:
                 return !Truthy(right);
-                
+
             case TokenType.MINUS:
                 CheckNumberOperand(expr.Operator, right);
                 return -(double)right;
@@ -248,6 +271,15 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
         object? val = null;
         if (stmt.Initializer != null) val = Evaluate(stmt.Initializer);
         environment.Define(stmt.Name.Lexeme, val);
+        return null;
+    }
+
+    public object? VisitWhileStmt(Stmt.While stmt)
+    {
+        while (Truthy(Evaluate(stmt.Condition)))
+        {
+            Execute(stmt.Body);
+        }
         return null;
     }
 

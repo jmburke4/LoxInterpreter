@@ -48,14 +48,32 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses and expressions.
+    /// </summary>
+    /// <returns></returns>
+    private Expr And()
+    {
+        Expr expr = Equality();
+
+        while (Match(TokenType.AND))
+        {
+            Token op = Previous;
+            Expr right = Equality();
+            expr = new Expr.Logical(expr, op, right);
+        }
+
+        return expr;
+    }
+
+    /// <summary>
     /// Parses variable assignment expressions.
     /// </summary>
     /// <returns></returns>
     private Expr Assignment()
     {
-        Expr expr = Equality();
+        Expr expr = Or();
 
-        if (Match([TokenType.EQUAL]))
+        if (Match(TokenType.EQUAL))
         {
             Token equals = Previous;
             Expr value = Assignment();
@@ -148,7 +166,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         try
         {
-            if (Match([TokenType.VAR])) return VarDeclaration();
+            if (Match(TokenType.VAR)) return VarDeclaration();
             return Statement();
         }
         catch (ParseError ex)
@@ -219,10 +237,65 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Builds a for statement tree by appending block statements with an initializer,
+    /// condition, and increment clause.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt ForStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+        Stmt? initializer;
+        if (Match(TokenType.SEMICOLON)) initializer = null;
+        else if (Match(TokenType.VAR)) initializer = VarDeclaration();
+        else initializer = ExpressionStatement();
+
+        Expr? condition = null;
+        if (!Check(TokenType.SEMICOLON)) condition = Expression();
+        Consume(TokenType.SEMICOLON, "Expect ';' after loop condition.");
+
+        Expr? increment = null;
+        if (!Check(TokenType.RIGHT_PAREN)) increment = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        Stmt body = Statement();
+
+        if (increment != null) body = new Stmt.Block([body, new Stmt.Expression(increment)]);
+        condition ??= new Expr.Literal(true);
+        body = new Stmt.While(condition, body);
+
+        if (initializer != null) body = new Stmt.Block([initializer, body]);
+
+        return body;
+    }
+
+    /// <summary>
+    /// Parses out an if statement with an option else clause.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt IfStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+        Expr cond = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+
+        Stmt thenBranch = Statement();
+        Stmt? elseBranch = null;
+
+        if (Match(TokenType.ELSE))
+        {
+            elseBranch = Statement();
+        }
+
+        return new Stmt.If(cond, thenBranch, elseBranch);
+    }
+
+    /// <summary>
     /// Checks if the current token is one of the types passed.
     /// </summary>
     /// <param name="types">The types to check the token against.</param>
     /// <returns>True or False</returns>
+    private bool Match(TokenType type) => Match([type]);
     private bool Match(List<TokenType> types)
     {
         foreach (var type in types)
@@ -238,19 +311,37 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses or expressions.
+    /// </summary>
+    /// <returns></returns>
+    private Expr Or()
+    {
+        Expr expr = And();
+
+        while (Match(TokenType.OR))
+        {
+            Token op = Previous;
+            Expr right = And();
+            expr = new Expr.Logical(expr, op, right);
+        }
+
+        return expr;
+    }
+
+    /// <summary>
     /// Parses literal and grouping tokens.
     /// </summary>
     /// <returns>An expression</returns>
     private Expr Primary()
     {
-        if (Match([TokenType.FALSE])) return new Expr.Literal(false);
-        if (Match([TokenType.TRUE])) return new Expr.Literal(true);
-        if (Match([TokenType.NIL])) return new Expr.Literal(null);
+        if (Match(TokenType.FALSE)) return new Expr.Literal(false);
+        if (Match(TokenType.TRUE)) return new Expr.Literal(true);
+        if (Match(TokenType.NIL)) return new Expr.Literal(null);
 
         if (Match([TokenType.NUMBER, TokenType.STRING])) return new Expr.Literal(Previous.Literal);
-        if (Match([TokenType.IDENTIFIER])) return new Expr.Variable(Previous);
+        if (Match(TokenType.IDENTIFIER)) return new Expr.Variable(Previous);
 
-        if (Match([TokenType.LEFT_PAREN]))
+        if (Match(TokenType.LEFT_PAREN))
         {
             Expr expr = Expression();
             Consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
@@ -277,8 +368,11 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <returns></returns>
     private Stmt Statement()
     {
-        if (Match([TokenType.PRINT])) return PrintStatement();
-        if (Match([TokenType.LEFT_BRACE])) return new Stmt.Block(Block());
+        if (Match(TokenType.FOR)) return ForStatement();
+        if (Match(TokenType.IF)) return IfStatement();
+        if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.WHILE)) return WhileStatement();
+        if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
     }
 
@@ -354,11 +448,24 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         Token name = Consume(TokenType.IDENTIFIER, "Expect variable name.");
 
         Expr init;
-        if (Match([TokenType.EQUAL])) init = Expression();
+        if (Match(TokenType.EQUAL)) init = Expression();
         else throw new ParseError();
 
         Consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
         return new Stmt.Var(name, init);
+    }
+
+    /// <summary>
+    /// Parses the condition and action for a while statement.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt.While WhileStatement()
+    {
+        Consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+        Expr condition = Expression();
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after condition.");
+        Stmt body = Statement();
+        return new Stmt.While(condition, body);
     }
 
     /// <summary>

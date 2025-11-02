@@ -3,7 +3,7 @@ namespace LoxInterpreter.Tests;
 /// <summary>
 /// See https://github.com/munificent/craftinginterpreters/blob/master/test/precedence.lox
 /// </summary>
-public class InterpreterTests
+public class ExpressionTests
 {
     private static object? TestHelper(string input)
     {
@@ -96,6 +96,10 @@ public class InterpreterTests
 
     [Fact]
     public void OneSlashNegOne() => Assert.Equal(-1, (double?)TestHelper("1 / -1;"));
+
+    /// <summary>
+    /// Divide by zero
+    /// </summary>
 
     [Fact]
     public void DivideByZero() => Assert.Equal("nil", TestHelper("1 / 0;"));

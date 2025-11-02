@@ -15,6 +15,8 @@ public class AstPrinter : Expr.IVisitor<string>
 
     public string VisitLiteralExpr(Expr.Literal expr) => expr.Value?.ToString() ?? "nil";
 
+    public string VisitLogicalExpr(Expr.Logical expr) => "logical expression";
+
     public string VisitUnaryExpr(Expr.Unary expr) => Parenthesize(expr.Operator.Lexeme, [expr.Right]);
 
     // I added this just to get the project to compile, this needs fact checked
