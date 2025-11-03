@@ -7,11 +7,6 @@ namespace LoxInterpreter;
 public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
 {
     /// <summary>
-    /// A fixed reference to the global environment.
-    /// </summary>
-    private readonly Environment globals;
-
-    /// <summary>
     /// A reference to the current scope to evaluate within.
     /// </summary>
     private Environment environment;
@@ -22,15 +17,20 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
     public readonly ErrorHandler ErrorHandler;
 
     /// <summary>
+    /// A fixed reference to the global environment.
+    /// </summary>
+    public readonly Environment Globals;
+
+    /// <summary>
     /// Constructs an instance of an interpreter object.
     /// </summary>
     /// <param name="errorHandler"></param>
     public Interpreter(ErrorHandler errorHandler)
     {
-        globals = new();
-        globals.Define("clock", new Clock());
+        Globals = new();
+        Globals.Define("clock", new Clock());
 
-        environment = globals;
+        environment = Globals;
         ErrorHandler = errorHandler;
     }
 
@@ -96,7 +96,7 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
     /// </summary>
     /// <param name="statements">The statements to execute</param>
     /// <param name="env">The environment to evaluate in</param>
-    private void ExecuteBlock(List<Stmt> statements, Environment env)
+    public void ExecuteBlock(List<Stmt> statements, Environment env)
     {
         Environment previous = environment;
         try
@@ -250,6 +250,13 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
     public object? VisitExpressionStmt(Stmt.Expression stmt)
     {
         Evaluate(stmt.Expr);
+        return null;
+    }
+
+    public object? VisitFunctionStmt(Stmt.Function stmt)
+    {
+        LoxFunction function = new(stmt);
+        environment.Define(stmt.Name.Lexeme, function);
         return null;
     }
 

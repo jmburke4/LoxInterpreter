@@ -160,18 +160,6 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
-    /// Generates a <see cref="ParseError"/> exception and sends a message to the error handler.
-    /// </summary>
-    /// <param name="token">The unexpected token.</param>
-    /// <param name="msg">The error message.</param>
-    /// <returns>A <see cref="ParseError"/> exception</returns>
-    private ParseError Error(Token token, string msg)
-    {
-        ErrorHandler.Error(token, msg);
-        return new ParseError();
-    }
-
-    /// <summary>
     /// Parses a variable declaration.
     /// </summary>
     /// <returns></returns>
@@ -179,6 +167,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         try
         {
+            if (Match(TokenType.FUN)) return Function("function");
             if (Match(TokenType.VAR)) return VarDeclaration();
             return Statement();
         }
@@ -194,6 +183,18 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
             Synchronize();
             return null;
         }
+    }
+
+    /// <summary>
+    /// Generates a <see cref="ParseError"/> exception and sends a message to the error handler.
+    /// </summary>
+    /// <param name="token">The unexpected token.</param>
+    /// <param name="msg">The error message.</param>
+    /// <returns>A <see cref="ParseError"/> exception</returns>
+    private ParseError Error(Token token, string msg)
+    {
+        ErrorHandler.Error(token, msg);
+        return new ParseError();
     }
 
     /// <summary>
@@ -299,11 +300,33 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return body;
     }
 
+    private Stmt.Function Function(string kind) // kind can be function or method
+    {
+        Token name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+        Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+        List<Token> parameters = [];
+        if (!Check(TokenType.RIGHT_PAREN))
+        {
+            do
+            {
+                if (parameters.Count >= 255) Error(Peek, "Can't have more than 255 parameters.");
+
+                parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+            } while (Match(TokenType.COMMA));
+        }
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+        Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+        List<Stmt> body = Block();
+
+        return new Stmt.Function(name, parameters, body);
+    }
+
     /// <summary>
     /// Parses out an if statement with an option else clause.
     /// </summary>
     /// <returns></returns>
-    private Stmt IfStatement()
+    private Stmt.If IfStatement()
     {
         Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
         Expr cond = Expression();

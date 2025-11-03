@@ -4,7 +4,7 @@ public interface ILoxCallable
 {
     public int Arity();
 
-    public object Call(Interpreter interpreter, List<object> arguments);
+    public object? Call(Interpreter interpreter, List<object> arguments);
 }
 
 internal class Clock : ILoxCallable
@@ -18,4 +18,3 @@ internal class Clock : ILoxCallable
     
     public override string ToString() => "<native fn>";
 }
-    
