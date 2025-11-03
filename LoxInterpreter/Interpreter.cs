@@ -4,17 +4,35 @@ namespace LoxInterpreter;
 /// Evaluates expression trees and manages memory throughout the lifetime of the program.
 /// </summary>
 /// <param name="errorHandler">The <see cref="ErrorHandler"/> to use</param>
-public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stmt.IVisitor<object?>
+public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
 {
+    /// <summary>
+    /// A fixed reference to the global environment.
+    /// </summary>
+    private readonly Environment globals;
+
     /// <summary>
     /// A reference to the current scope to evaluate within.
     /// </summary>
-    private Environment environment = new();
+    private Environment environment;
 
     /// <summary>
     /// The <see cref="ErrorHandler"/> instance to report syntax and runtime errors to the user. 
     /// </summary>
-    public readonly ErrorHandler ErrorHandler = errorHandler;
+    public readonly ErrorHandler ErrorHandler;
+
+    /// <summary>
+    /// Constructs an instance of an interpreter object.
+    /// </summary>
+    /// <param name="errorHandler"></param>
+    public Interpreter(ErrorHandler errorHandler)
+    {
+        globals = new();
+        globals.Define("clock", new Clock());
+
+        environment = globals;
+        ErrorHandler = errorHandler;
+    }
 
     /// <summary>
     /// Checks if a value is a number type.
@@ -205,6 +223,28 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
     {
         ExecuteBlock(stmt.Statements, new Environment(environment));
         return null;
+    }
+
+    public object VisitCallExpr(Expr.Call expr)
+    {
+        object callee = Evaluate(expr.Callee);
+
+        List<object> args = [];
+        foreach (var arg in expr.Arguments)
+        {
+            args.Add(Evaluate(arg));
+        }
+
+        if (!callee.GetType().GetInterfaces().Contains(typeof(ILoxCallable)))
+            throw new RuntimeError(expr.Paren, "Can only call functions and classes.");
+
+        ILoxCallable function = (ILoxCallable)callee;
+
+        if (args.Count != function.Arity())
+            throw new RuntimeError(expr.Paren,
+            $"Expected {function.Arity()} arguments but got {args.Count}.");
+
+        return function.Call(this, args);
     }
 
     public object? VisitExpressionStmt(Stmt.Expression stmt)

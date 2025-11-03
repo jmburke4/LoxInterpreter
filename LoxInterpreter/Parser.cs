@@ -108,6 +108,19 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return statements;
     }
 
+    private Expr Call()
+    {
+        Expr expr = Primary();
+
+        while (true)
+        {
+            if (Match(TokenType.LEFT_PAREN)) expr = FinishCall(expr);
+            else break;
+        }
+
+        return expr;
+    }
+
     /// <summary>
     /// Checks if the current token matches the TokenType parameter.
     /// </summary>
@@ -234,6 +247,23 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         }
 
         return expr;
+    }
+
+    private Expr.Call FinishCall(Expr callee)
+    {
+        List<Expr> args = [];
+        if (!Check(TokenType.RIGHT_PAREN))
+        {
+            do
+            {
+                if (args.Count >= 255) Error(Peek, "Can't have more than 255 arguments.");
+                args.Add(Expression());
+            } while (Match(TokenType.COMMA));
+        }
+
+        Token paren = Consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+        return new Expr.Call(callee, paren, args);
     }
 
     /// <summary>
@@ -435,7 +465,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
             return new Expr.Unary(op, right);
         }
 
-        return Primary();
+        return Call();
     }
 
     /// <summary>
