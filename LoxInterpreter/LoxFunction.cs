@@ -15,7 +15,15 @@ public class LoxFunction(Stmt.Function declaration) : ILoxCallable
             env.Define(declaration.Params.ElementAt(i).Lexeme, arguments.ElementAt(i));
         }
 
-        interpreter.ExecuteBlock(declaration.Body, env);
+        try
+        {
+            interpreter.ExecuteBlock(declaration.Body, env);
+        }
+        catch (Return rtn)
+        {
+            return rtn.Value;
+        }
+
         return null;
     }
 

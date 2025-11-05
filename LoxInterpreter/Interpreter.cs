@@ -294,6 +294,14 @@ public class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
         return null;
     }
 
+    public object? VisitReturnStmt(Stmt.Return stmt)
+    {
+        object? val = null;
+        if (stmt.Value != null) val = Evaluate(stmt.Value);
+
+        throw new Return(val);
+    }
+
     public object VisitUnaryExpr(Expr.Unary expr)
     {
         object right = Evaluate(expr.Right);

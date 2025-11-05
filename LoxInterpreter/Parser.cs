@@ -415,6 +415,20 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return new Stmt.Print(val);
     }
 
+    private Stmt.Return ReturnStatement()
+    {
+        Token keyword = Previous;
+
+        Expr? value = null;
+        if (!Check(TokenType.SEMICOLON))
+        {
+            value = Expression();
+        }
+
+        Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value);
+    }
+
     /// <summary>
     /// Parses a statement.
     /// </summary>
@@ -424,6 +438,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         if (Match(TokenType.FOR)) return ForStatement();
         if (Match(TokenType.IF)) return IfStatement();
         if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.RETURN)) return ReturnStatement();
         if (Match(TokenType.WHILE)) return WhileStatement();
         if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
@@ -553,4 +568,3 @@ public class ParseError : Exception
 {
 
 }
-    
