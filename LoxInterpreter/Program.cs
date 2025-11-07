@@ -36,14 +36,13 @@ class Program
 
     private static void RunPrompt()
     {
-        Console.WriteLine("Welcome to the Lox Intepreter REPL! \nType exit or ctrl + c to exit...");
         string? line;
         while (true)
         {
             Console.Write("\n>");
             line = Console.ReadLine();
-            if (line == null || line == "exit") break;
-            if (line == "cls") Console.Clear();
+            if (line == null || line == ":exit") break;
+            if (line == ":cls") Console.Clear();
             else
             {
                 Run(line);
@@ -65,6 +64,7 @@ class Program
         }
         else
         {
+            Console.WriteLine("Welcome to the Lox Intepreter REPL! \nType \":exit\" or ctrl + c to exit...");
             RunPrompt();
         }
     }

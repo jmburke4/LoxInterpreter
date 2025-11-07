@@ -1,14 +1,16 @@
 namespace LoxInterpreter;
 
-public class LoxFunction(Stmt.Function declaration) : ILoxCallable
+public class LoxFunction(Stmt.Function declaration, Environment closure) : ILoxCallable
 {
+    private readonly Environment closure = closure;
+
     private readonly Stmt.Function declaration = declaration;
 
     public int Arity() => declaration.Params.Count;
 
     public object? Call(Interpreter interpreter, List<object> arguments)
     {
-        Environment env = new(interpreter.Globals);
+        Environment env = new(closure);
 
         for (int i = 0; i < declaration.Params.Count; i++)
         {
