@@ -4,17 +4,35 @@ namespace LoxInterpreter;
 /// Evaluates expression trees and manages memory throughout the lifetime of the program.
 /// </summary>
 /// <param name="errorHandler">The <see cref="ErrorHandler"/> to use</param>
-public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stmt.IVisitor<object?>
+public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor
 {
     /// <summary>
     /// A reference to the current scope to evaluate within.
     /// </summary>
-    private Environment environment = new();
+    private Environment environment;
 
     /// <summary>
     /// The <see cref="ErrorHandler"/> instance to report syntax and runtime errors to the user. 
     /// </summary>
-    public readonly ErrorHandler ErrorHandler = errorHandler;
+    public readonly ErrorHandler ErrorHandler;
+
+    /// <summary>
+    /// A fixed reference to the global environment.
+    /// </summary>
+    public readonly Environment Globals;
+
+    /// <summary>
+    /// Constructs an instance of an interpreter object.
+    /// </summary>
+    /// <param name="errorHandler"></param>
+    public Interpreter(ErrorHandler errorHandler)
+    {
+        Globals = new();
+        Globals.Define("clock", new Clock());
+
+        environment = Globals;
+        ErrorHandler = errorHandler;
+    }
 
     /// <summary>
     /// Checks if a value is a number type.
@@ -22,11 +40,7 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
     /// <param name="op">The token preceding the operand</param>
     /// <param name="operand">The value to check</param>
     /// <exception cref="RuntimeError"></exception>
-    private static void CheckNumberOperand(Token op, object operand)
-    {
-        if (operand is double) return;
-        throw new RuntimeError(op, "Operand must be a number.");
-    }
+    private static void CheckNumberOperand(Token op, object operand) => CheckNumberOperand(op, 1.0, operand);
 
     /// <inheritdoc cref="CheckNumberOperand"/>
     private static void CheckNumberOperand(Token op, object left, object right)
@@ -78,7 +92,7 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
     /// </summary>
     /// <param name="statements">The statements to execute</param>
     /// <param name="env">The environment to evaluate in</param>
-    private void ExecuteBlock(List<Stmt> statements, Environment env)
+    public void ExecuteBlock(List<Stmt> statements, Environment env)
     {
         Environment previous = environment;
         try
@@ -140,150 +154,6 @@ public class Interpreter(ErrorHandler errorHandler) : Expr.IVisitor<object>, Stm
             ErrorHandler.Exception(ex);
         }
     }
-
-    #region Visitors
-
-    public object VisitAssignExpr(Expr.Assign expr)
-    {
-        object val = Evaluate(expr.Value);
-        environment.Assign(expr.Name, val);
-        return val;
-    }
-
-    public object VisitBinaryExpr(Expr.Binary expr)
-    {
-        object left = Evaluate(expr.Left);
-        object right = Evaluate(expr.Right);
-
-        switch (expr.Operator.Type)
-        {
-            case TokenType.GREATER:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left > (double)right;
-
-            case TokenType.GREATER_EQUAL:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left >= (double)right;
-
-            case TokenType.LESS:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left < (double)right;
-
-            case TokenType.LESS_EQUAL:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left <= (double)right;
-
-            case TokenType.BANG_EQUAL:
-                return !Equal(left, right);
-
-            case TokenType.EQUAL_EQUAL:
-                return Equal(left, right);
-
-            case TokenType.MINUS:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left - (double)right;
-
-            case TokenType.SLASH:
-                CheckNumberOperand(expr.Operator, left, right);
-                if ((double)right != 0) return (double)left / (double)right;
-                else throw new RuntimeError(expr.Operator, $"Divide by zero error. \"{left}/{right}\"");
-
-            case TokenType.STAR:
-                CheckNumberOperand(expr.Operator, left, right);
-                return (double)left * (double)right;
-
-            case TokenType.PLUS:
-                if (left is double && right is double) return (double)left + (double)right;
-                if (left is string || right is string) return left.ToString() + right.ToString();
-                throw new RuntimeError(expr.Operator, $"Operands must be two numbers or two strings or a number and a string. \"{left}\"+\"{right}\"");
-        }
-
-        throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
-    }
-
-    public object? VisitBlockStmt(Stmt.Block stmt)
-    {
-        ExecuteBlock(stmt.Statements, new Environment(environment));
-        return null;
-    }
-
-    public object? VisitExpressionStmt(Stmt.Expression stmt)
-    {
-        Evaluate(stmt.Expr);
-        return null;
-    }
-
-    public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
-
-    public object? VisitIfStmt(Stmt.If stmt)
-    {
-        if (Truthy(Evaluate(stmt.Condition))) Execute(stmt.ThenBranch);
-        else if (stmt.ElseBranch != null) Execute(stmt.ElseBranch);
-        return null;
-    }
-
-    public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
-
-    public object VisitLogicalExpr(Expr.Logical expr)
-    {
-        object left = Evaluate(expr.Left);
-
-        if (expr.Operator.Type == TokenType.OR)
-        {
-            if (Truthy(left)) return left;
-        }
-        else
-        {
-            if (!Truthy(left)) return left;
-        }
-
-        return Evaluate(expr.Right);
-    }
-
-    // This is a void function, but C# does not allow void type Ts
-    public object? VisitPrintStmt(Stmt.Print stmt)
-    {
-        Console.WriteLine(Evaluate(stmt.Expr));
-        return null;
-    }
-
-    public object VisitUnaryExpr(Expr.Unary expr)
-    {
-        object right = Evaluate(expr.Right);
-
-        switch (expr.Operator.Type)
-        {
-            case TokenType.BANG:
-                return !Truthy(right);
-
-            case TokenType.MINUS:
-                CheckNumberOperand(expr.Operator, right);
-                return -(double)right;
-        }
-
-        throw new RuntimeError(expr.Operator, $"Unexpected token in VisitUnaryExpr(). \"{expr.Operator.Lexeme}\"");
-    }
-
-    public object VisitVariableExpr(Expr.Variable expr) => environment.Get(expr.Name) ?? "nil";
-
-    public object? VisitVarStmt(Stmt.Var stmt)
-    {
-        object? val = null;
-        if (stmt.Initializer != null) val = Evaluate(stmt.Initializer);
-        environment.Define(stmt.Name.Lexeme, val);
-        return null;
-    }
-
-    public object? VisitWhileStmt(Stmt.While stmt)
-    {
-        while (Truthy(Evaluate(stmt.Condition)))
-        {
-            Execute(stmt.Body);
-        }
-        return null;
-    }
-
-    #endregion
 }
 
 /// <summary>

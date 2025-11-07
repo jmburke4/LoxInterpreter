@@ -109,6 +109,23 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Determines whether the current expression is a function call or not.
+    /// </summary>
+    /// <returns>An expression</returns>
+    private Expr Call()
+    {
+        Expr expr = Primary();
+
+        while (true)
+        {
+            if (Match(TokenType.LEFT_PAREN)) expr = FinishCall(expr);
+            else break;
+        }
+
+        return expr;
+    }
+
+    /// <summary>
     /// Checks if the current token matches the TokenType parameter.
     /// </summary>
     /// <param name="type">The <see cref="TokenType"/> to compare.</param>
@@ -147,18 +164,6 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
-    /// Generates a <see cref="ParseError"/> exception and sends a message to the error handler.
-    /// </summary>
-    /// <param name="token">The unexpected token.</param>
-    /// <param name="msg">The error message.</param>
-    /// <returns>A <see cref="ParseError"/> exception</returns>
-    private ParseError Error(Token token, string msg)
-    {
-        ErrorHandler.Error(token, msg);
-        return new ParseError();
-    }
-
-    /// <summary>
     /// Parses a variable declaration.
     /// </summary>
     /// <returns></returns>
@@ -166,6 +171,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     {
         try
         {
+            if (Match(TokenType.FUN)) return Function("function");
             if (Match(TokenType.VAR)) return VarDeclaration();
             return Statement();
         }
@@ -181,6 +187,18 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
             Synchronize();
             return null;
         }
+    }
+
+    /// <summary>
+    /// Generates a <see cref="ParseError"/> exception and sends a message to the error handler.
+    /// </summary>
+    /// <param name="token">The unexpected token.</param>
+    /// <param name="msg">The error message.</param>
+    /// <returns>A <see cref="ParseError"/> exception</returns>
+    private ParseError Error(Token token, string msg)
+    {
+        ErrorHandler.Error(token, msg);
+        return new ParseError();
     }
 
     /// <summary>
@@ -237,6 +255,28 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses a function call with parameters.
+    /// </summary>
+    /// <param name="callee">The identifier of the function being called</param>
+    /// <returns>A call expression to be evaluated</returns>
+    private Expr.Call FinishCall(Expr callee)
+    {
+        List<Expr> args = [];
+        if (!Check(TokenType.RIGHT_PAREN))
+        {
+            do
+            {
+                if (args.Count >= 255) Error(Peek, "Can't have more than 255 arguments.");
+                args.Add(Expression());
+            } while (Match(TokenType.COMMA));
+        }
+
+        Token paren = Consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+        return new Expr.Call(callee, paren, args);
+    }
+
+    /// <summary>
     /// Builds a for statement tree by appending block statements with an initializer,
     /// condition, and increment clause.
     /// </summary>
@@ -270,10 +310,37 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses a function definition.
+    /// </summary>
+    /// <param name="kind">Function or a method</param>
+    /// <returns>A function statement</returns>
+    private Stmt.Function Function(string kind) // kind can be function or method
+    {
+        Token name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
+        Consume(TokenType.LEFT_PAREN, $"Expect '(' after {kind} name.");
+        List<Token> parameters = [];
+        if (!Check(TokenType.RIGHT_PAREN))
+        {
+            do
+            {
+                if (parameters.Count >= 255) Error(Peek, "Can't have more than 255 parameters.");
+
+                parameters.Add(Consume(TokenType.IDENTIFIER, "Expect parameter name."));
+            } while (Match(TokenType.COMMA));
+        }
+        Consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+
+        Consume(TokenType.LEFT_BRACE, $"Expect '{{' before {kind} body.");
+        List<Stmt> body = Block();
+
+        return new Stmt.Function(name, parameters, body);
+    }
+
+    /// <summary>
     /// Parses out an if statement with an option else clause.
     /// </summary>
     /// <returns></returns>
-    private Stmt IfStatement()
+    private Stmt.If IfStatement()
     {
         Consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
         Expr cond = Expression();
@@ -296,6 +363,8 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <param name="types">The types to check the token against.</param>
     /// <returns>True or False</returns>
     private bool Match(TokenType type) => Match([type]);
+
+    /// <inheritdoc cref="Match(TokenType)"/>
     private bool Match(List<TokenType> types)
     {
         foreach (var type in types)
@@ -363,6 +432,24 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     }
 
     /// <summary>
+    /// Parses the return statement within a function definition.
+    /// </summary>
+    /// <returns></returns>
+    private Stmt.Return ReturnStatement()
+    {
+        Token keyword = Previous;
+
+        Expr? value = null;
+        if (!Check(TokenType.SEMICOLON))
+        {
+            value = Expression();
+        }
+
+        Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+        return new Stmt.Return(keyword, value ?? new Expr.Literal(null));
+    }
+
+    /// <summary>
     /// Parses a statement.
     /// </summary>
     /// <returns></returns>
@@ -371,6 +458,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         if (Match(TokenType.FOR)) return ForStatement();
         if (Match(TokenType.IF)) return IfStatement();
         if (Match(TokenType.PRINT)) return PrintStatement();
+        if (Match(TokenType.RETURN)) return ReturnStatement();
         if (Match(TokenType.WHILE)) return WhileStatement();
         if (Match(TokenType.LEFT_BRACE)) return new Stmt.Block(Block());
         return ExpressionStatement();
@@ -435,7 +523,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
             return new Expr.Unary(op, right);
         }
 
-        return Primary();
+        return Call();
     }
 
     /// <summary>
@@ -500,4 +588,3 @@ public class ParseError : Exception
 {
 
 }
-    
