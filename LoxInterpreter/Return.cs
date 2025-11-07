@@ -1,5 +1,3 @@
-using System;
-
 namespace LoxInterpreter;
 
 public class Return(object? value) : Exception

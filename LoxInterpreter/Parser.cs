@@ -108,6 +108,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return statements;
     }
 
+    /// <summary>
+    /// Determines whether the current expression is a function call or not.
+    /// </summary>
+    /// <returns>An expression</returns>
     private Expr Call()
     {
         Expr expr = Primary();
@@ -250,6 +254,11 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return expr;
     }
 
+    /// <summary>
+    /// Parses a function call with parameters.
+    /// </summary>
+    /// <param name="callee">The identifier of the function being called</param>
+    /// <returns>A call expression to be evaluated</returns>
     private Expr.Call FinishCall(Expr callee)
     {
         List<Expr> args = [];
@@ -300,6 +309,11 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return body;
     }
 
+    /// <summary>
+    /// Parses a function definition.
+    /// </summary>
+    /// <param name="kind">Function or a method</param>
+    /// <returns>A function statement</returns>
     private Stmt.Function Function(string kind) // kind can be function or method
     {
         Token name = Consume(TokenType.IDENTIFIER, $"Expect {kind} name.");
@@ -349,6 +363,8 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
     /// <param name="types">The types to check the token against.</param>
     /// <returns>True or False</returns>
     private bool Match(TokenType type) => Match([type]);
+
+    /// <inheritdoc cref="Match(TokenType)"/>
     private bool Match(List<TokenType> types)
     {
         foreach (var type in types)
@@ -415,6 +431,10 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         return new Stmt.Print(val);
     }
 
+    /// <summary>
+    /// Parses the return statement within a function definition.
+    /// </summary>
+    /// <returns></returns>
     private Stmt.Return ReturnStatement()
     {
         Token keyword = Previous;
@@ -426,7 +446,7 @@ public class Parser(ErrorHandler errorHandler, List<Token> tokens)
         }
 
         Consume(TokenType.SEMICOLON, "Expect ';' after return value.");
-        return new Stmt.Return(keyword, value);
+        return new Stmt.Return(keyword, value ?? new Expr.Literal(null));
     }
 
     /// <summary>
