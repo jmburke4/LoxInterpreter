@@ -4,7 +4,7 @@ namespace LoxInterpreter;
 /// Evaluates expression trees and manages memory throughout the lifetime of the program.
 /// </summary>
 /// <param name="errorHandler">The <see cref="ErrorHandler"/> to use</param>
-public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor<object?>
+public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor
 {
     /// <summary>
     /// A reference to the current scope to evaluate within.

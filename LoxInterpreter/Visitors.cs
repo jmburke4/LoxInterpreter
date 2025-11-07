@@ -60,11 +60,7 @@ public partial class Interpreter
         throw new RuntimeError(expr.Operator, $"Unexpected token in VisitBinaryExpr(). \"{expr.Operator.Lexeme}\"");
     }
 
-    public object? VisitBlockStmt(Stmt.Block stmt)
-    {
-        ExecuteBlock(stmt.Statements, new Environment(environment));
-        return null;
-    }
+    public void VisitBlockStmt(Stmt.Block stmt) => ExecuteBlock(stmt.Statements, new Environment(environment));
 
     public object VisitCallExpr(Expr.Call expr)
     {
@@ -88,26 +84,16 @@ public partial class Interpreter
         return function.Call(this, args) ?? "nil";
     }
 
-    public object? VisitExpressionStmt(Stmt.Expression stmt)
-    {
-        Evaluate(stmt.Expr);
-        return null;
-    }
+    public void VisitExpressionStmt(Stmt.Expression stmt) => Evaluate(stmt.Expr);
 
-    public object? VisitFunctionStmt(Stmt.Function stmt)
-    {
-        LoxFunction function = new(stmt, environment);
-        environment.Define(stmt.Name.Lexeme, function);
-        return null;
-    }
+    public void VisitFunctionStmt(Stmt.Function stmt) => environment.Define(stmt.Name.Lexeme, new LoxFunction(stmt, environment));
 
     public object VisitGroupingExpr(Expr.Grouping expr) => Evaluate(expr.Expression);
 
-    public object? VisitIfStmt(Stmt.If stmt)
+    public void VisitIfStmt(Stmt.If stmt)
     {
         if (Truthy(Evaluate(stmt.Condition))) Execute(stmt.ThenBranch);
         else if (stmt.ElseBranch != null) Execute(stmt.ElseBranch);
-        return null;
     }
 
     public object VisitLiteralExpr(Expr.Literal expr) => expr.Value ?? new Expr.Literal(null);
@@ -128,13 +114,9 @@ public partial class Interpreter
         return Evaluate(expr.Right);
     }
 
-    public object? VisitPrintStmt(Stmt.Print stmt)
-    {
-        Console.WriteLine(Evaluate(stmt.Expr));
-        return null;
-    }
+    public void VisitPrintStmt(Stmt.Print stmt) => Console.WriteLine(Evaluate(stmt.Expr));
 
-    public object? VisitReturnStmt(Stmt.Return stmt)
+    public void VisitReturnStmt(Stmt.Return stmt)
     {
         object? val = null;
         if (stmt.Value != null) val = Evaluate(stmt.Value);
@@ -161,20 +143,18 @@ public partial class Interpreter
 
     public object VisitVariableExpr(Expr.Variable expr) => environment.Get(expr.Name) ?? "nil";
 
-    public object? VisitVarStmt(Stmt.Var stmt)
+    public void VisitVarStmt(Stmt.Var stmt)
     {
         object? val = null;
         if (stmt.Initializer != null) val = Evaluate(stmt.Initializer);
         environment.Define(stmt.Name.Lexeme, val);
-        return null;
     }
 
-    public object? VisitWhileStmt(Stmt.While stmt)
+    public void VisitWhileStmt(Stmt.While stmt)
     {
         while (Truthy(Evaluate(stmt.Condition)))
         {
             Execute(stmt.Body);
         }
-        return null;
     }
 }
