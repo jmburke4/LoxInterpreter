@@ -2,3 +2,6 @@
 */obj
 */TestResults
 /.vs
+
+# Test.lox is just used a playground for testing multi-line lox
+test.lox

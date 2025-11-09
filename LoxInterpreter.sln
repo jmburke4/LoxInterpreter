@@ -26,6 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lox", "Lox", "{688D9B70-847
 	ProjectSection(SolutionItems) = preProject
 		counter.lox = counter.lox
 		sample.lox = sample.lox
+		test.lox = test.lox
 	EndProjectSection
 EndProject
 Global
