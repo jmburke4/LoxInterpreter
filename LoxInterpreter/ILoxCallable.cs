@@ -32,5 +32,51 @@ internal class Clock : ILoxCallable
         return (double)DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000;
     }
 
-    public override string ToString() => "<native fn>";
+    public override string ToString() => "<native fn clock>";
+}
+
+internal class Indexof : ILoxCallable
+{
+    public int Arity() => 2;
+
+    public object Call(Interpreter interpreter, List<object> arguments)
+    {
+        // NEED ERROR HANDLING
+        string str = (string)arguments[0];
+        string target = (string)arguments[1];
+
+        return (double)str.IndexOf(target);
+    }
+
+    public override string ToString() => "<native fn indexof>";
+}
+
+internal class Strlen : ILoxCallable
+{
+    public int Arity() => 1;
+
+    public object Call(Interpreter interpreter, List<object> arguments)
+    {
+        // NEED ERROR HANDLING
+        return (double)arguments.First().ToString().Length;
+    }
+
+    public override string ToString() => "<native fn strlen>";
+}
+
+internal class Substring : ILoxCallable
+{
+    public int Arity() => 3;
+
+    public object Call(Interpreter interpreter, List<object> arguments)
+    {
+        // NEED ERROR HANDLING
+        string str = (string)arguments[0];
+        double start = (double)arguments[1];
+        double len = (double)arguments[2];
+
+        return str.Substring((int)start, (int)len);
+    }
+
+    public override string ToString() => "<native fn substring>";
 }

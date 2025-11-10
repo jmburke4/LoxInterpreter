@@ -1,0 +1,17 @@
+var arr = "1 2 3 4 5";
+
+print arr;
+
+fun car(arr){
+    return substring(arr, 0, indexof(arr, " "));
+}
+
+print "car(arr): (" + car(arr) + ")";
+
+fun cdr(arr){
+    var len = strlen(arr);
+    var start = indexof(arr, " ");
+    return substring(arr, start, len - start - 1);
+}
+
+print "cdr(arr): (" + cdr(arr) + ")";

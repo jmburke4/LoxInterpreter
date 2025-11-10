@@ -29,6 +29,9 @@ public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor
     {
         Globals = new();
         Globals.Define("clock", new Clock());
+        Globals.Define("indexof", new Indexof());
+        Globals.Define("strlen", new Strlen());
+        Globals.Define("substring", new Substring());
 
         environment = Globals;
         ErrorHandler = errorHandler;
@@ -46,7 +49,7 @@ public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor
     private static void CheckNumberOperand(Token op, object left, object right)
     {
         if (left is double && right is double) return;
-        throw new RuntimeError(op, "Operand must be a number.");
+        throw new RuntimeError(op, $"Operand must be a number. \"{left}({left.GetType()}) - {right}({right.GetType()})\"");
     }
 
     /// <summary>
