@@ -35,6 +35,9 @@ internal class Clock : ILoxCallable
     public override string ToString() => "<native fn clock>";
 }
 
+/// <summary>
+/// Returns the index of the first occurence of the second parameter in the first parameter.
+/// </summary>
 internal class Indexof : ILoxCallable
 {
     public int Arity() => 2;
@@ -49,10 +52,15 @@ internal class Indexof : ILoxCallable
     public override string ToString() => "<native fn indexof>";
 }
 
+/// <summary>
+/// Returns the string element in the string array in the first parameter at the index in
+/// the second parameter.
+/// </summary>
 internal class Strat : ILoxCallable
 {
     public int Arity() => 2;
 
+    /// Lox usage: strat("ab cde fghi", 2) => "fghi"
     public object Call(Interpreter interpreter, List<object> arguments)
     {
         string element = ((string)arguments[0]).Trim().Split(' ')[(int)(double)arguments[1]];
@@ -62,6 +70,9 @@ internal class Strat : ILoxCallable
     public override string ToString() => "<native fn strat>";
 }
 
+/// <summary>
+/// Returns the length of the string passed as the argument.
+/// </summary>
 internal class Strlen : ILoxCallable
 {
     public int Arity() => 1;
@@ -75,6 +86,10 @@ internal class Strlen : ILoxCallable
     public override string ToString() => "<native fn strlen>";
 }
 
+/// <summary>
+/// Returns a substring from the first argument with the starting index of the second
+/// argument with the length of the third argument.
+/// </summary>
 internal class Substring : ILoxCallable
 {
     public int Arity() => 3;

@@ -26,6 +26,7 @@ fun count(arr){
 //print 0 == count(" ");
 //print 0 == count("");
 
+// Sorts a string array of numbers
 fun quicksort(arr){
     var count = count(arr);
     if (count <= 1) return arr;
