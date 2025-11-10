@@ -1,0 +1,48 @@
+// Quicksort algorithm written in lox using native string operations implemented in ILoxCallable.cs
+
+// Counts the number of elements in an array 
+// (a string with individual elements delimited by a space)
+fun count(arr){
+    var count = 0;
+    var len = strlen(arr);
+
+    for (var i = 0; i < len; i = i + 1){
+        var t = substring(arr, i, 1);
+        if (i == 0){
+            if (t != " ") count = count + 1;
+        }
+        else{
+            if (substring(arr, i - 1, 1) == " " and t != " ") count = count + 1;
+        }
+    }
+
+    return count;
+}
+
+//print 3 == count("a b c");
+//print 5 == count(" a bc d ef g");
+//print 2 == count(" a b ");
+//print 2 == count("a bc ");
+//print 0 == count(" ");
+//print 0 == count("");
+
+fun quicksort(arr){
+    var count = count(arr);
+    if (count <= 1) return arr;
+
+    var pivot = strat(arr, 0);
+    var smaller = "";
+    var bigger = "";
+
+    for (var i = 1; i < count; i = i + 1){
+        var element = strat(arr, i);
+        if (element > pivot) bigger = bigger + " " + element;
+        else smaller = smaller + " " + element;
+    }
+
+    return quicksort(smaller) + " " + pivot + " " + quicksort(bigger);
+}
+
+var list = "2 1 5 3 4";
+print list;
+print quicksort(list);

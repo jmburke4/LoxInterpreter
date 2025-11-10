@@ -30,6 +30,7 @@ public partial class Interpreter : Expr.IVisitor<object>, Stmt.IVisitor
         Globals = new();
         Globals.Define("clock", new Clock());
         Globals.Define("indexof", new Indexof());
+        Globals.Define("strat", new Strat());
         Globals.Define("strlen", new Strlen());
         Globals.Define("substring", new Substring());
 

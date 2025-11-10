@@ -41,14 +41,25 @@ internal class Indexof : ILoxCallable
 
     public object Call(Interpreter interpreter, List<object> arguments)
     {
-        // NEED ERROR HANDLING
         string str = (string)arguments[0];
         string target = (string)arguments[1];
-
         return (double)str.IndexOf(target);
     }
 
     public override string ToString() => "<native fn indexof>";
+}
+
+internal class Strat : ILoxCallable
+{
+    public int Arity() => 2;
+
+    public object Call(Interpreter interpreter, List<object> arguments)
+    {
+        string element = ((string)arguments[0]).Trim().Split(' ')[(int)(double)arguments[1]];
+        return double.TryParse(element, out double rtn) ? rtn : element;
+    }
+
+    public override string ToString() => "<native fn strat>";
 }
 
 internal class Strlen : ILoxCallable
@@ -57,8 +68,8 @@ internal class Strlen : ILoxCallable
 
     public object Call(Interpreter interpreter, List<object> arguments)
     {
-        // NEED ERROR HANDLING
-        return (double)arguments.First().ToString().Length;
+        string str = (string)arguments[0];
+        return (double)str.Length;
     }
 
     public override string ToString() => "<native fn strlen>";
@@ -70,11 +81,9 @@ internal class Substring : ILoxCallable
 
     public object Call(Interpreter interpreter, List<object> arguments)
     {
-        // NEED ERROR HANDLING
         string str = (string)arguments[0];
         double start = (double)arguments[1];
         double len = (double)arguments[2];
-
         return str.Substring((int)start, (int)len);
     }
 
