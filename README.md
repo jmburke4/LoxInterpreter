@@ -2,11 +2,11 @@
 
 Jackson Burke - Fall 2025 - CS 403 Programming Languages
 
-Please note that VSCode has a built-in markdown previewer/renderer that does not require any extensions. You may preview a markdown file by secondary clicking the filename within VSCode and selecting "Open Preview".
+Please note that if you have Visual Studio Code installed, it has a built-in markdown previewer/renderer that does not require any extensions. You may preview a markdown file by secondary clicking the filename within VS Code and selecting "Open Preview". You may also view the rendered markdown files on GitHub.
 
 ## Introduction ##
 
-I have followed Robert Nystroms instructions from [Crafting Interpreters](https://craftinginterpreters.com/contents.html) through Chapter 10, building a Lox Interpreter using C# and .NET 9.0. This project was developed using Windows 10, but will run on any operating system that has the .NET 9.0 SDK and Runtime installed. The .NET solution contains three dotnet projects: two console applications and an xUnit testing project. Please see individual .cs files for code comments and documentation, and the testing section at the end of this README. Please see *Test.md* for a description of my testing of the interpreter.
+I have followed Robert Nystroms instructions from [Crafting Interpreters](https://craftinginterpreters.com/contents.html) through Chapter 10, building a Lox Interpreter using C# and .NET 9.0. This project was developed using Windows 10, but will run on any operating system that has the .NET 9.0 SDK and Runtime installed. The .NET solution contains three dotnet projects: two console applications and an xUnit testing project. Please see individual *.cs* files for code comments and documentation, and the testing section at the end of this README. Please see *Testing.md* for a description of my testing of the interpreter.
 
 View on [GitHub](https://github.com/jmburke4/LoxInterpreter/tree/submission).
 
@@ -19,6 +19,7 @@ View on [GitHub](https://github.com/jmburke4/LoxInterpreter/tree/submission).
 - quicksort.lox
 - README.md
 - sample.lox
+- Testing.md
 - testresults.txt
 - /.vscode
     - launch.json
@@ -55,7 +56,7 @@ View on [GitHub](https://github.com/jmburke4/LoxInterpreter/tree/submission).
 
 ## Building and Running ##
 
-Building this project requires the .NET 9 SDK for building from the command line. The SDK can be downloaded from Microsoft [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0). Instructions for using the SDK installer can be found [here](https://learn.microsoft.com/en-us/dotnet/core/install/). Once downloaded, run the installer. You can verify that the runtime is installed by running ```dotnet --version``` from your command line interpreter. Open your CLI at the root directory of this project .NET to see the solution and project files.
+Building this project requires the .NET 9 SDK for building from the command line. The SDK can be downloaded from Microsoft [here](https://dotnet.microsoft.com/en-us/download/dotnet/9.0). Instructions for using the SDK installer can be found [here](https://learn.microsoft.com/en-us/dotnet/core/install/). Once downloaded, run the installer and follow the prompts. You can verify that the runtime is installed by running ```dotnet --version``` from your command line interface. Open your CLI at the root directory of this project to run any of the following ```dotnet``` commands.
 
 To build all projects in the solution:
 ```shell
@@ -74,7 +75,7 @@ dotnet run --project <path-to-.csproj>
 dotnet run --project ./LoxInterpreter/LoxInterpreter.csproj
 ```
 
-*Lox.bat* is setup to take an optional file path parameter to pass to the interpreter executable. If passed a valid filepath, the interpreter will sequentially run all of the lines in the file, then enter the REPL. If the contents of *sample.lox* are
+*Lox.bat* is setup to take an optional file path parameter to pass to the interpreter executable. If passed a valid filepath, the interpreter will sequentially run all of the lines in the file, then enter the REPL. If the contents of a file named *sample.lox* are
 
 ```
 var a = "Hello, World";
