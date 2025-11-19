@@ -12,47 +12,55 @@ View on [GitHub](https://github.com/jmburke4/LoxInterpreter/tree/submission).
 
 ## Repository Structure ##
 
-- Ast.bat
-- counter.lox
-- Lox.bat
-- LoxInterpreter.sln
-- quicksort.lox
-- README.md
-- sample.lox
-- Testing.md
-- testresults.txt
-- /.vscode
-    - launch.json
-    - tasks.json
-- /GenerateAst
-    - GenerateAst.csproj
-    - Generator.cs
-    - Program.cs
-- /LoxInterpreter
-    - AstPrinter.cs
-    - Environment.cs
-    - ErrorHandler.cs
-    - Expr.cs
-    - ILoxCallable.cs
-    - Interpreter.cs
-    - LoxFunction.cs
-    - LoxInterpreter.csproj
-    - Parser.cs
-    - Program.cs
-    - Return.cs
-    - Scanner.cs
-    - Stmt.cs
-    - Token.cs
-    - Visitors.cs
-- /LoxInterpreter.Tests
-    - AstPrinterTests.cs
-    - ControlFlowTests.cs
-    - ExpressionTests.cs
-    - FunctionTests.cs
-    - LoxInterpreter.Tests.csproj
-    - ParserTests.cs
-    - ScannerTests.cs
-    - TokenTests.cs
+```
+LoxInterpreter
+|   Ast.bat
+|   counter.lox
+|   Lox.bat
+|   LoxInterpreter.sln
+|   quicksort.lox
+|   README.md
+|   sample.lox
+|   Testing.md
+|   testresults.txt
+|         
++---.vscode
+|       launch.json
+|       tasks.json
+|       
++---GenerateAst
+|       GenerateAst.csproj
+|       Generator.cs
+|       Program.cs
+|  
++---LoxInterpreter
+|       AstPrinter.cs
+|       Environment.cs
+|       ErrorHandler.cs
+|       Expr.cs
+|       ILoxCallable.cs
+|       Interpreter.cs
+|       LoxFunction.cs
+|       LoxInterpreter.csproj
+|       Parser.cs
+|       Program.cs
+|       Return.cs
+|       Scanner.cs
+|       Stmt.cs
+|       Token.cs
+|       Visitors.cs
+|       
+|                       
+\---LoxInterpreter.Tests
+        AstPrinterTests.cs
+        ControlFlowTests.cs
+        ExpressionTests.cs
+        FunctionTests.cs
+        LoxInterpreter.Tests.csproj
+        ParserTests.cs
+        ScannerTests.cs
+        TokenTests.cs
+```
 
 ## Building and Running ##
 
