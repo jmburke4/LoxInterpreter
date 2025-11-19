@@ -1,0 +1,29 @@
+R:\LoxInterpreter>dotnet test
+Restore complete (1.1s)
+  LoxInterpreter succeeded (0.5s) → LoxInterpreter\bin\Debug\net9.0\LoxInterpreter.dll
+  LoxInterpreter.Tests succeeded (0.2s) → LoxInterpreter.Tests\bin\Debug\net9.0\LoxInterpreter.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.12]   Discovering: LoxInterpreter.Tests
+[xUnit.net 00:00:00.21]   Discovered:  LoxInterpreter.Tests
+[xUnit.net 00:00:00.21]   Starting:    LoxInterpreter.Tests
+[Line 1] Error : Unexpected character "|"
+[Line 1] Error  at '/': Divide by zero error. "10/0"
+[Line 130] RuntimeException: Divide by zero error. "10/0"
+   at LoxInterpreter.Interpreter.VisitBinaryExpr(Binary expr) in R:\LoxInterpreter\LoxInterpreter\Visitors.cs:line 48
+   at LoxInterpreter.Expr.Binary.Accept[T](IVisitor`1 visitor) in R:\LoxInterpreter\LoxInterpreter\Expr.cs:line 62
+   at LoxInterpreter.Interpreter.Evaluate(Expr expr) in R:\LoxInterpreter\LoxInterpreter\Interpreter.cs:line 86
+   at LoxInterpreter.Interpreter.VisitBinaryExpr(Binary expr) in R:\LoxInterpreter\LoxInterpreter\Visitors.cs:line 14
+   at LoxInterpreter.Expr.Binary.Accept[T](IVisitor`1 visitor) in R:\LoxInterpreter\LoxInterpreter\Expr.cs:line 62
+   at LoxInterpreter.Interpreter.Evaluate(Expr expr) in R:\LoxInterpreter\LoxInterpreter\Interpreter.cs:line 86
+   at LoxInterpreter.Interpreter.Interpret(Expr expr) in R:\LoxInterpreter\LoxInterpreter\Interpreter.cs:line 125
+[Line 1] Error  at '/': Divide by zero error. "1/0"
+[Line 130] RuntimeException: Divide by zero error. "1/0"
+   at LoxInterpreter.Interpreter.VisitBinaryExpr(Binary expr) in R:\LoxInterpreter\LoxInterpreter\Visitors.cs:line 48
+   at LoxInterpreter.Expr.Binary.Accept[T](IVisitor`1 visitor) in R:\LoxInterpreter\LoxInterpreter\Expr.cs:line 62
+   at LoxInterpreter.Interpreter.Evaluate(Expr expr) in R:\LoxInterpreter\LoxInterpreter\Interpreter.cs:line 86
+   at LoxInterpreter.Interpreter.Interpret(Expr expr) in R:\LoxInterpreter\LoxInterpreter\Interpreter.cs:line 125
+[xUnit.net 00:00:00.40]   Finished:    LoxInterpreter.Tests
+  LoxInterpreter.Tests test succeeded (1.7s)
+
+Test summary: total: 81, failed: 0, succeeded: 81, skipped: 0, duration: 1.6s
+Build succeeded in 4.1s
